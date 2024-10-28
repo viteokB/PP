@@ -1,0 +1,6 @@
+@MerosWebApi_HostAddress = http://localhost:5161
+
+GET {{MerosWebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

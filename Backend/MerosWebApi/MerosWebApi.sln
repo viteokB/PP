@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerosWebApi", "MerosWebApi.csproj", "{10E5AB43-7584-47A9-B400-EBD7CF81C9BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerosWebApi.Core", "..\MerosWebApi.Core\MerosWebApi.Core.csproj", "{38285557-9C76-4949-A110-B8070E7E2A6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerosWebApi.Persistence", "..\MerosWebApi.Persistence\MerosWebApi.Persistence.csproj", "{AF7399F4-9879-467F-A68D-DEA55405B159}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerosWebApi.Application", "..\MerosWebApi.Application\MerosWebApi.Application.csproj", "{B2FC50BE-122E-4034-9277-5A11D9458E5E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10E5AB43-7584-47A9-B400-EBD7CF81C9BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10E5AB43-7584-47A9-B400-EBD7CF81C9BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10E5AB43-7584-47A9-B400-EBD7CF81C9BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10E5AB43-7584-47A9-B400-EBD7CF81C9BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38285557-9C76-4949-A110-B8070E7E2A6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38285557-9C76-4949-A110-B8070E7E2A6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38285557-9C76-4949-A110-B8070E7E2A6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38285557-9C76-4949-A110-B8070E7E2A6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF7399F4-9879-467F-A68D-DEA55405B159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF7399F4-9879-467F-A68D-DEA55405B159}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF7399F4-9879-467F-A68D-DEA55405B159}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF7399F4-9879-467F-A68D-DEA55405B159}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2FC50BE-122E-4034-9277-5A11D9458E5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2FC50BE-122E-4034-9277-5A11D9458E5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2FC50BE-122E-4034-9277-5A11D9458E5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2FC50BE-122E-4034-9277-5A11D9458E5E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3E37A554-9DAA-4606-89EC-521252326B21}
+	EndGlobalSection
+EndGlobal
