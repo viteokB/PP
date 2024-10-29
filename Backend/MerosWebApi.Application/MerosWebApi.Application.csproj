@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MerosWebApi.Core\MerosWebApi.Core.csproj" />
+    <ProjectReference Include="..\MerosWebApi.Persistence\MerosWebApi.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
