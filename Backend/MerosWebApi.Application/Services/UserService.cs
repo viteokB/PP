@@ -139,9 +139,13 @@ namespace MerosWebApi.Application.Services
             user.UnconfirmedEmailCreatedAt = DateTime.UtcNow;
 
             // Prepare email template.
-            await using var stream = _embedded
-                .GetFileInfo($"Resources/EmailTemplates/Email_ConfirmEmail.html")
-                .CreateReadStream();
+            var parentDir = Directory.GetParent(Directory.GetCurrentDirectory());
+            string relativePath = Path.Combine(parentDir.FullName,
+                "MerosWebApi.Application/Common/EmailSender/EmailTemplates/Email_ConfirmEmail.html");
+
+            // Prepare email template.
+            await using var stream = File.OpenRead(relativePath);
+
             var emailBody = await new StreamReader(stream).ReadToEndAsync();
             emailBody = emailBody.Replace("{{APP_NAME}}", _appSettings.Name);
             emailBody = emailBody.Replace("{{EMAIL_CONFIRM_URL}}",
