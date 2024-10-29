@@ -1,3 +1,5 @@
+using MerosWebApi.Persistence;
+using MerosWebApi.Application;
 
 namespace MerosWebApi
 {
@@ -8,6 +10,13 @@ namespace MerosWebApi
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            var configuration = builder.Configuration;
+
+            builder.Services.AddDataAccess(configuration);
+            builder.Services.AddDevEmailConfiguration(configuration);
+            builder.Services.AddAppSettings(configuration);
+            builder.Services.AddApplicationServices();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

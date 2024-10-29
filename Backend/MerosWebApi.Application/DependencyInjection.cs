@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using MerosWebApi.Application.Common.EmailSender;
 using MerosWebApi.Application.Interfaces;
 using MerosWebApi.Application.Common;
+using MerosWebApi.Application.Services;
+using MerosWebApi.Application.Common.SecurityHelpers;
+using MerosWebApi.Application.Common.Mapping;
+using System.Reflection;
 
 namespace MerosWebApi.Application
 {
@@ -34,7 +38,7 @@ namespace MerosWebApi.Application
             var emailConfiguration = new DevelopmentConfiguration(emailAddress, emailPassword, hostAddress,
                 hostPort);
 
-            services.AddSingleton<DevelopmentConfiguration>(emailConfiguration);
+            services.AddSingleton<IEmailConfiguration>(emailConfiguration);
 
             return services;
         }
@@ -74,6 +78,21 @@ namespace MerosWebApi.Application
             };
 
             services.AddSingleton<AppSettings>(appSettings);
+
+            return services;
+        }
+
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPasswordHelper, PasswordHelper>();
+            services.AddScoped<IEmailSender, EmailSender>();
+
+            services.AddAutoMapper(config =>
+            {
+                config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
+            });
+
 
             return services;
         }
