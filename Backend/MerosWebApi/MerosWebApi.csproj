@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\MerosWebApi.Application\MerosWebApi.Application.csproj" />
+    <ProjectReference Include="..\MerosWebApi.Core\MerosWebApi.Core.csproj" />
+    <ProjectReference Include="..\MerosWebApi.Persistence\MerosWebApi.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
