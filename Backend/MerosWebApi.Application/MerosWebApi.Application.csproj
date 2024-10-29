@@ -7,9 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Common\EmailSender\EmailTemplates\Email_ConfirmEmail.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Common\EmailSender\EmailTemplates\Email_ConfirmEmail.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MailKit" Version="4.8.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.10" />
   </ItemGroup>
 
   <ItemGroup>
