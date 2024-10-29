@@ -15,6 +15,11 @@ namespace MerosWebApi.Persistence.Repositories
     {
         private readonly MerosDbContext _dbContext;
 
+        public UserRepository(MerosDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
         public async Task AddUser(User user)
         {
             var dbUser = PropertyAssigner.Map<DatabaseUser, User>(user);

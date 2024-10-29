@@ -17,14 +17,14 @@ namespace MerosWebApi.Persistence.Configurations
             builder.ToCollection("users");
 
             builder.Property(u => u.Id)
-                .HasField("_id");
+                .HasElementName("_id");
 
             builder.Property(u => u.Full_name)
-                .HasField("full_name")
+                .HasElementName("full_name")
                 .HasMaxLength(150);
 
             builder.Property(u => u.IsActive)
-                .HasField("is_active");
+                .HasElementName("is_active");
 
             ConfigureUserTimesFields(builder);
             ConfigureEmailFields(builder);
@@ -38,51 +38,51 @@ namespace MerosWebApi.Persistence.Configurations
         public void ConfigureUserTimesFields(EntityTypeBuilder<DatabaseUser> builder)
         {
             builder.Property(u => u.CreatedAt)
-                .HasField("created_at")
+                .HasElementName("created_at")
                 .IsRequired();
 
             builder.Property(u => u.UpdatedAt)
-                .HasField("updated_at");
+                .HasElementName("updated_at");
 
             builder.Property(u => u.LastLoginAt)
-                .HasField("last_login_at");
+                .HasElementName("last_login_at");
         }
 
         public void ConfigurePasswordFields(EntityTypeBuilder<DatabaseUser> builder)
         {
             builder.Property(u => u.PasswordHash)
-                .HasField("pwd_hash");
+                .HasElementName("pwd_hash");
 
             builder.Property(u => u.PasswordSalt)
-                .HasField("pwd_salt");
+                .HasElementName("pwd_salt");
 
             builder.Property(u => u.ResetPasswordCode)
-                .HasField("reset_pwd_code");
+                .HasElementName("reset_pwd_code");
 
             builder.Property(u => u.ResetPasswordCount)
-                .HasField("reset_pwd_count");
+                .HasElementName("reset_pwd_count");
 
             builder.Property(u => u.ResetPasswordCreatedAt)
-                .HasField("reset_pwd_cr_at");
+                .HasElementName("reset_pwd_cr_at");
         }
 
         public void ConfigureEmailFields(EntityTypeBuilder<DatabaseUser> builder)
         {
             builder.Property(u => u.Email)
-                .HasField("email")
+                .HasElementName("email")
                 .HasMaxLength(320);
 
             builder.Property(u => u.UnconfirmedEmail)
-                .HasField("unconf_email");
+                .HasElementName("unconf_email");
 
             builder.Property(u => u.UnconfirmedEmailCreatedAt)
-                .HasField("unconf_email_cr_at");
+                .HasElementName("unconf_email_cr_at");
 
             builder.Property(u => u.UnconfirmedEmailCode)
-                .HasField("unconf_email_code");
+                .HasElementName("unconf_email_code");
 
             builder.Property(u => u.UnconfirmedEmailCount)
-                .HasField("unconf_email_count");
+                .HasElementName("unconf_email_count");
 
 
         }
@@ -90,10 +90,10 @@ namespace MerosWebApi.Persistence.Configurations
         public void ConfigureLoginFailedFields(EntityTypeBuilder<DatabaseUser> builder)
         {
             builder.Property(u => u.LoginFailedAt)
-                .HasField("login_fail_at");
+                .HasElementName("login_fail_at");
 
             builder.Property(u => u.LoginFailedCount)
-                .HasField("login_fail_count");
+                .HasElementName("login_fail_count");
         }
     }
 }
