@@ -24,7 +24,8 @@ namespace MerosWebApi.Persistence.Configurations
                 .HasMaxLength(150);
 
             builder.Property(u => u.IsActive)
-                .HasElementName("is_active");
+                .HasElementName("is_active")
+                .IsRequired();
 
             ConfigureUserTimesFields(builder);
             ConfigureEmailFields(builder);

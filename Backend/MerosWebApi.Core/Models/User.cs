@@ -12,7 +12,7 @@ namespace MerosWebApi.Core.Models
 
         public string Full_name { get; set; }
 
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
@@ -24,11 +24,11 @@ namespace MerosWebApi.Core.Models
 
         public int LoginFailedCount { get; set; }
 
-        public string UnconfirmedEmail { get; set; }
+        public string? UnconfirmedEmail { get; set; }
 
         public DateTime? UnconfirmedEmailCreatedAt { get; set; }
 
-        public string UnconfirmedEmailCode { get; set; }
+        public string? UnconfirmedEmailCode { get; set; }
 
         public int UnconfirmedEmailCount { get; set; }
 
@@ -36,11 +36,17 @@ namespace MerosWebApi.Core.Models
 
         public int ResetPasswordCount { get; set; }
 
-        public string ResetPasswordCode { get; set; }
+        public string? ResetPasswordCode { get; set; }
 
         public byte[] PasswordHash { get; set; }
 
         public byte[] PasswordSalt { get; set; }
+
+        public string? RefreshToken { get; set; }
+
+        public DateTime TokenCreated { get; set; }
+
+        public DateTime TokenExpires { get; set; }
 
         public bool IsActive { get; set; }
     }
