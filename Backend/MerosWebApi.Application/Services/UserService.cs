@@ -42,7 +42,7 @@ namespace MerosWebApi.Application.Services
             _embedded = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
         }
 
-        public async Task<AuthenticationResDto> AuthenticateAsync(AuthenticateReqDto dto)
+        public async Task<(AuthenticationResDto, string)> AuthenticateAsync(AuthenticateReqDto dto)
         {
             throw new NotImplementedException();
         }
@@ -98,7 +98,20 @@ namespace MerosWebApi.Application.Services
 
         public async Task ConfirmEmailAsync(string code)
         {
-            throw new NotImplementedException();
+            var user = await _repository.GetUserByUnconfirmedCode(code);
+            if (user == null)
+                throw new EntityNotFoundException("Somethin went wrong... Please contact support");
+
+            if (user.Email == null)
+                user.IsActive = true;
+
+            user.Email = user.UnconfirmedEmail;
+            user.UnconfirmedEmail = null;
+            user.UnconfirmedEmailCode = null;
+            user.UnconfirmedEmailCount = 0;
+            user.UnconfirmedEmailCreatedAt = null;
+
+            await _repository.UpdateUser(user);
         }
 
         public async Task PasswordResetAsync(PasswordResetDto dto)

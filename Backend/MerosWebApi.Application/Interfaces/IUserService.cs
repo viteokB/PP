@@ -4,7 +4,7 @@ namespace MerosWebApi.Application.Interfaces
 {
     public interface IUserService
     {
-        public Task<AuthenticationResDto> AuthenticateAsync(AuthenticateReqDto dto);
+        public Task<(AuthenticationResDto, string)> AuthenticateAsync(AuthenticateReqDto dto);
         public Task ConfirmEmailAsync(string code);
         public Task<ConfirmResetPswdDto> ConfirmResetPasswordAsync(string code, string email);
         public Task DeleteAsync(string email, string userEmail);

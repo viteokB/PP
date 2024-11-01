@@ -45,12 +45,25 @@ namespace MerosWebApi.Persistence.Repositories
             return PropertyAssigner.Map<User, DatabaseUser>(dbUser) ;
         }
 
+        public async Task<User> GetUserByUnconfirmedCode(string unconfirmedCode)
+        {
+            var dbUser = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.UnconfirmedEmailCode == unconfirmedCode);
+
+            if (dbUser == null)
+                return null;
+
+            return PropertyAssigner.Map<User, DatabaseUser>(dbUser);
+        }
+
         public async Task<User> UpdateUser(User user)
         {
             var dbUserToUpdate = await _dbContext.Users
-                .FirstOrDefaultAsync(u => u.Email == user.Email);
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             PropertyAssigner.AssignPropertyValues<DatabaseUser, User>(dbUserToUpdate, user);
+
+            await _dbContext.SaveChangesAsync();
 
             return user;
         }

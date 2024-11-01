@@ -11,6 +11,8 @@ namespace MerosWebApi.Core.Repository
     {
         public Task<User> GetUserByEmail(string email);
 
+        public Task<User> GetUserByUnconfirmedCode(string unconfirmedCode);
+
         public Task AddUser(User user);
 
         public Task<User> UpdateUser(User user);

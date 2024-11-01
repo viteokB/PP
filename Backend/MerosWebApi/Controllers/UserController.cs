@@ -38,5 +38,20 @@ namespace MerosWebApi.Controllers
                 return BadRequest(new  { Message = ex.Message });
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("confirm-email")]
+        public async Task<ActionResult> ConfirmEmailAsync(string code)
+        {
+            try
+            {
+                await _userService.ConfirmEmailAsync(code);
+                return NoContent();
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
