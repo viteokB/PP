@@ -12,6 +12,11 @@ using MerosWebApi.Application.Services;
 using MerosWebApi.Application.Common.SecurityHelpers;
 using MerosWebApi.Application.Common.Mapping;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Security.Claims;
+using MerosWebApi.Core.Repository;
 
 namespace MerosWebApi.Application
 {
@@ -100,6 +105,59 @@ namespace MerosWebApi.Application
             services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
             services.AddScoped<IPasswordHelper, PasswordHelper>();
             services.AddScoped<ITokenGenerator, TokensGenerator>();
+
+            var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+
+            services
+                .AddAuthentication(configuration =>
+                {
+                    configuration.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    configuration.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(configuration =>
+                {
+                    configuration.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = context =>
+                        {
+                            var repository = context.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
+                            var userId = context.Principal?.Identity?.Name;
+                            if (userId == null)
+                            {
+                                context.Fail("Unauthorized");
+                                return Task.CompletedTask;
+                            }
+
+                            var user = repository.GetUserById(Guid.Parse(userId));
+
+                            if (user == null)
+                            {
+                                context.Fail("Unauthorized");
+                                return Task.CompletedTask;
+                            }
+
+                            return Task.CompletedTask;
+                        },
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies["tasty"];
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                    configuration.RequireHttpsMetadata = false;
+                    configuration.SaveToken = true;
+                    configuration.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                })
+                .AddCookie();
+
+            services.AddAuthorization();
 
             return services;
         }

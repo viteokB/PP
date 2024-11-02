@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.WireProtocol.Messages;
 using System.Net;
 using MerosWebApi.Application.Common.SecurityHelpers;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace MerosWebApi.Controllers
 {
@@ -29,6 +30,7 @@ namespace MerosWebApi.Controllers
             {
                 var authecateResult = await _userService.AuthenticateAsync(reqDto);
                 SetRefreshTokenToCookie(authecateResult.Item2);
+                Response.Cookies.Append("tasty", authecateResult.Item1.Token);
 
                 return Ok(authecateResult.Item1);
             }
