@@ -47,7 +47,6 @@ namespace MerosWebApi.Application
         {
             var appSettingsSection = configuration.GetSection("AppSettings");
 
-            var secret = appSettingsSection["Secret"];
             var name = appSettingsSection["Name"];
             int.TryParse(appSettingsSection["MaxLoginFailedCount"], out var maxLoginFailed);
             int.TryParse(appSettingsSection["LoginFailedWaitingTime"], out var loginFailedWait);
@@ -64,7 +63,6 @@ namespace MerosWebApi.Application
 
             var appSettings = new AppSettings
             {
-                Secret = secret,
                 Name = name,
                 MaxLoginFailedCount = maxLoginFailed,
                 LoginFailedWaitingTime = loginFailedWait,
@@ -85,7 +83,6 @@ namespace MerosWebApi.Application
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IPasswordHelper, PasswordHelper>();
             services.AddScoped<IEmailSender, EmailSender>();
 
             services.AddAutoMapper(config =>
@@ -93,6 +90,16 @@ namespace MerosWebApi.Application
                 config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
             });
 
+
+            return services;
+        }
+
+        public static IServiceCollection AddSecurityServices(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+            services.AddScoped<IPasswordHelper, PasswordHelper>();
+            services.AddScoped<ITokenGenerator, TokensGenerator>();
 
             return services;
         }

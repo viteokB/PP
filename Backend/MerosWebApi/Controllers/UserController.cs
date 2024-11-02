@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.WireProtocol.Messages;
 using System.Net;
+using MerosWebApi.Application.Common.SecurityHelpers;
 
 namespace MerosWebApi.Controllers
 {
@@ -18,6 +19,25 @@ namespace MerosWebApi.Controllers
         {
             _userService = userService;
         }
+
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public async Task<ActionResult<AuthenticationResDto>> AuthenticateAsync(
+            [FromBody] AuthenticateReqDto reqDto)
+        {
+            try
+            {
+                var authecateResult = await _userService.AuthenticateAsync(reqDto);
+                SetRefreshTokenToCookie(authecateResult.Item2);
+
+                return Ok(authecateResult.Item1);
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
 
         [AllowAnonymous]
         [HttpPost("register")]
@@ -53,5 +73,20 @@ namespace MerosWebApi.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        #region Private Helpers Methods
+
+        private void SetRefreshTokenToCookie(RefreshToken token)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = token.Expires
+            };
+
+            Response.Cookies.Append("refreshToken", token.Token, cookieOptions);
+        }
+
+        #endregion
     }
 }

@@ -17,6 +17,7 @@ namespace MerosWebApi
             builder.Services.AddDevEmailConfiguration(configuration);
             builder.Services.AddAppSettings(configuration);
             builder.Services.AddApplicationServices();
+            builder.Services.AddSecurityServices(configuration);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
