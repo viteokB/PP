@@ -9,14 +9,6 @@ namespace MerosWebApi.Application.Common
     public class AppSettings
     {
         /// <summary>
-        /// Получает или задает секрет для шифрования. Может быть любым текстом длиной не менее 16 символов.
-        /// </summary>
-        /// <value>
-        /// Секрет, используемый для шифрования.
-        /// </value>
-        public string Secret { get; set; }
-
-        /// <summary>
         /// Получает или задает имя WebAPI.
         /// </summary>
         /// <value>
