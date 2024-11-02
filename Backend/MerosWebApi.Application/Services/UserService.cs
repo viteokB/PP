@@ -127,9 +127,14 @@ namespace MerosWebApi.Application.Services
             return _mapper.Map<User, GetDetailsResDto>(user);
         }
 
-        public async Task<GetDetailsResDto> GetDetailsAsync(string email)
+        public async Task<GetDetailsResDto> GetDetailsAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await _repository.GetUserById(id);
+
+            if (user == null)
+                throw new EntityNotFoundException("User not found");
+
+            return _mapper.Map<User, GetDetailsResDto>(user);
         }
 
         public async Task<GetDetailsResDto> UpdateAsync(string email, string userEmail,

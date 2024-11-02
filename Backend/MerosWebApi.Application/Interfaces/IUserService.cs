@@ -9,7 +9,7 @@ namespace MerosWebApi.Application.Interfaces
         public Task ConfirmEmailAsync(string code);
         public Task<ConfirmResetPswdDto> ConfirmResetPasswordAsync(string code, string email);
         public Task DeleteAsync(string email, string userEmail);
-        public Task<GetDetailsResDto> GetDetailsAsync(string email);
+        public Task<GetDetailsResDto> GetDetailsAsync(Guid id);
         public Task PasswordResetAsync(PasswordResetDto dto);
         public Task<GetDetailsResDto> RegisterAsync(RegisterReqDto dto);
         public Task<GetDetailsResDto> UpdateAsync(string email, string userEmail, UpdateReqDto dto);
