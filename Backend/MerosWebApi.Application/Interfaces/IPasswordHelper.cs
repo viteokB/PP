@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MerosWebApi.Application.Common.SecurityHelpers
+namespace MerosWebApi.Application.Interfaces
 {
     public interface IPasswordHelper
     {

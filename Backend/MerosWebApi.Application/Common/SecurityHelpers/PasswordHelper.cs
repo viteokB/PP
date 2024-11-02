@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using MerosWebApi.Application.Interfaces;
 
 namespace MerosWebApi.Application.Common.SecurityHelpers
 {
@@ -23,7 +24,6 @@ namespace MerosWebApi.Application.Common.SecurityHelpers
                 passwordSalt: hmac.Key);
         }
 
-        /// <inheritdoc />
         public bool VerifyHash(string password, byte[] hash, byte[] salt)
         {
             if (password == null) throw new ArgumentNullException(nameof(password));
@@ -46,7 +46,6 @@ namespace MerosWebApi.Application.Common.SecurityHelpers
             return true;
         }
 
-        /// <inheritdoc />
         public string GenerateRandomString(int length)
         {
             return new string(Enumerable
