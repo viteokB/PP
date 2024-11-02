@@ -38,6 +38,25 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GetDetailsResDto>> GetDetailsAsync(Guid id)
+        {
+            try
+            {
+                return Ok(await _userService.GetDetailsAsync(id));
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+
 
         [AllowAnonymous]
         [HttpPost("register")]
