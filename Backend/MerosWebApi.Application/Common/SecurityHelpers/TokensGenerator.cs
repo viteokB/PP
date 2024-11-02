@@ -37,9 +37,11 @@ namespace MerosWebApi.Application.Common.SecurityHelpers
         {
             var refreshToken = new RefreshToken
             {
-                Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+                Token = Convert.ToHexString(RandomNumberGenerator.GetBytes(64)),
                 Expires = DateTime.Now.AddDays(7)
             };
+
+            refreshToken.Token = refreshToken.Token.Replace('/', 'A');
 
             return refreshToken;
         }
