@@ -23,6 +23,8 @@ namespace MerosWebApi.Application.Services
 
         private readonly IPasswordHelper _passwordHelper;
 
+        private readonly ITokenGenerator _tokenGenerator;
+
         private readonly IMapper _mapper;
 
         private readonly IEmailSender _emailSender;
@@ -32,7 +34,7 @@ namespace MerosWebApi.Application.Services
         private readonly EmbeddedFileProvider _embedded;
 
         public UserService(IUserRepository repository, IPasswordHelper passwordHelper,
-            IMapper mapper, IEmailSender emailSender, AppSettings appSettings)
+            IMapper mapper, IEmailSender emailSender, AppSettings appSettings, ITokenGenerator generator)
         {
             _repository = repository;
             _passwordHelper = passwordHelper;
@@ -40,11 +42,56 @@ namespace MerosWebApi.Application.Services
             _emailSender = emailSender;
             _appSettings = appSettings;
             _embedded = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
+            _tokenGenerator = generator;
         }
 
-        public async Task<(AuthenticationResDto, string)> AuthenticateAsync(AuthenticateReqDto dto)
+        public async Task<(AuthenticationResDto, RefreshToken)> AuthenticateAsync(AuthenticateReqDto dto)
         {
-            throw new NotImplementedException();
+            var user = await _repository.GetUserByEmail(dto.Email);
+
+            if (user == null)
+                throw new AuthenticationException("The email or password is incorrect");
+
+            if (user.LoginFailedAt != null)
+            {
+                var secondsPassed = DateTime.UtcNow.Subtract(
+                    user.LoginFailedAt.GetValueOrDefault()).Seconds;
+
+                var isMaxCountExceeded = user.LoginFailedCount >= _appSettings.MaxLoginFailedCount;
+                var isWaitingTimePassed = secondsPassed > _appSettings.LoginFailedWaitingTime;
+
+                if (isMaxCountExceeded && !isWaitingTimePassed)
+                {
+                    var secondsToWait = _appSettings.LoginFailedWaitingTime - secondsPassed;
+                    throw new TooManyFailedLoginAttemptsException(string.Format(
+                        "You must wait for {0} seconds before you try to log in again.", secondsToWait));
+                }
+            }
+
+            if (!_passwordHelper.VerifyHash(dto.Password, user.PasswordHash, user.PasswordSalt))
+            {
+                user.LoginFailedCount += 1;
+                user.LoginFailedAt = DateTime.Now;
+                await _repository.UpdateUser(user);
+                throw new AuthenticationException("The email or password is incorrect");
+            }
+
+            //Authentication successful
+            var refreshToken = _tokenGenerator.GenerateRefreshToken();
+
+            user.LoginFailedCount = 0;
+            user.LoginFailedAt = null;
+            user.LastLoginAt = DateTime.Now;
+            user.RefreshToken = refreshToken.Token;
+            user.TokenCreated = DateTime.Now;
+            user.TokenExpires = refreshToken.Expires;
+
+            await _repository.UpdateUser(user);
+
+            var responseDto = _mapper.Map<User, AuthenticationResDto>(user);
+            responseDto.Token = _tokenGenerator.GenerateAccessToken(user.Id.ToString());
+
+            return (responseDto, refreshToken);
         }
 
         //Did

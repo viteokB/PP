@@ -1,10 +1,11 @@
 ﻿using MerosWebApi.Application.Common.DTOs.UserService;
+using MerosWebApi.Application.Common.SecurityHelpers;
 
 namespace MerosWebApi.Application.Interfaces
 {
     public interface IUserService
     {
-        public Task<(AuthenticationResDto, string)> AuthenticateAsync(AuthenticateReqDto dto);
+        public Task<(AuthenticationResDto, RefreshToken)> AuthenticateAsync(AuthenticateReqDto dto);
         public Task ConfirmEmailAsync(string code);
         public Task<ConfirmResetPswdDto> ConfirmResetPasswordAsync(string code, string email);
         public Task DeleteAsync(string email, string userEmail);

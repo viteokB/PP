@@ -8,6 +8,8 @@ namespace MerosWebApi.Application.Common.DTOs.UserService
 {
     public class AuthenticateReqDto
     {
+        public string Email { get; set; }
 
+        public string Password { get; set; }
     }
 }
