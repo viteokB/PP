@@ -77,5 +77,16 @@ namespace MerosWebApi.Persistence.Repositories
 
             return user;
         }
+
+        public async Task<User> GetUserByRefreshToken(string refreshToken)
+        {
+            var user = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+            if (user == null)
+                return default;
+
+            return PropertyAssigner.Map<User, DatabaseUser>(user);
+        }
     }
 }

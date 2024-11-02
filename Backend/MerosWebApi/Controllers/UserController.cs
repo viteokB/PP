@@ -58,6 +58,26 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpGet("refresh-token")]
+        public async Task<ActionResult> RefreshToken(string token)
+        {
+            try
+            {
+                var newToken = await _userService.RefreshAccessToken(token);
+                Response.Cookies.Append("tasty", newToken);
+
+                return Ok(newToken);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
 
 
         [AllowAnonymous]

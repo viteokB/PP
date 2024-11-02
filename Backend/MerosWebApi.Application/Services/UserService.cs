@@ -127,6 +127,19 @@ namespace MerosWebApi.Application.Services
             return _mapper.Map<User, GetDetailsResDto>(user);
         }
 
+        public async Task<string> RefreshAccessToken(string refreshToken)
+        {
+            var user = await _repository.GetUserByRefreshToken(refreshToken);
+
+            if (user == null)
+                throw new EntityNotFoundException("User with such refreshToken didn't founded");
+
+            if (user.TokenExpires < DateTime.Now)
+                throw new TimeExpiredException("The refresh token has expired");
+
+            return _tokenGenerator.GenerateAccessToken(user.Id.ToString());
+        }
+
         public async Task<GetDetailsResDto> GetDetailsAsync(Guid id)
         {
             var user = await _repository.GetUserById(id);
