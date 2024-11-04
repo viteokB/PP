@@ -16,6 +16,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MerosWebApi.Application.Common.ValidatorOptions;
 using MerosWebApi.Core.Repository;
 
 namespace MerosWebApi.Application
@@ -158,6 +161,25 @@ namespace MerosWebApi.Application
                 .AddCookie();
 
             services.AddAuthorization();
+
+            return services;
+        }
+
+        public static IServiceCollection AddControllersAndFluentValidatation(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.Configure<UserValidationOptions>(configuration.GetSection(nameof(UserValidationOptions)));
+
+            var userValidOptions = configuration.GetSection(nameof(UserValidationOptions)).Get<UserValidationOptions>();
+
+            ValidatorExtensions.InitValidatorExtensions(userValidOptions);
+
+            // Регистрация валидаторов из текущей сборки
+            services.AddControllers()
+                .AddFluentValidation(config =>
+                {
+                    config.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+                });
 
             return services;
         }

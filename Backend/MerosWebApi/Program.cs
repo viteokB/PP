@@ -1,5 +1,7 @@
+using FluentValidation.AspNetCore;
 using MerosWebApi.Persistence;
 using MerosWebApi.Application;
+using MerosWebApi.Application.Common.DTOs.UserService.DtoValidators;
 
 namespace MerosWebApi
 {
@@ -19,7 +21,8 @@ namespace MerosWebApi
             builder.Services.AddApplicationServices();
             builder.Services.AddSecurityServices(configuration);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllersAndFluentValidatation(configuration);
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
