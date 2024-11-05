@@ -23,13 +23,9 @@ namespace MerosWebApi.Application.Common.DTOs.UserService
         {
             profile.CreateMap<User, AuthenticationResDto>()
                 .ForMember(res => res.Id,
-                    opt => opt.MapFrom(user => user.Id));
-
-            profile.CreateMap<User, AuthenticationResDto>()
+                    opt => opt.MapFrom(user => user.Id))
                 .ForMember(res => res.FullName,
-                    opt => opt.MapFrom(user => user.Full_name));
-
-            profile.CreateMap<User, AuthenticationResDto>()
+                    opt => opt.MapFrom(user => user.Full_name))
                 .ForMember(res => res.Email,
                     opt => opt.MapFrom(user => user.Email));
         }

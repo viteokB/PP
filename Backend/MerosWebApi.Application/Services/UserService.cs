@@ -154,7 +154,7 @@ namespace MerosWebApi.Application.Services
             UpdateReqDto dto)
         {
             if (userId != id)
-                throw new ForbiddenException();
+                throw new ForbiddenException("Доступ запрещен");
 
             var user = await _repository.GetUserById(id);
 
@@ -188,7 +188,7 @@ namespace MerosWebApi.Application.Services
 
         public async Task<bool> DeleteAsync(Guid id, Guid userId)
         {
-            if (userId != id) throw new ForbiddenException();
+            if (userId != id) throw new ForbiddenException("Доступ запрещен");
 
             return await _repository.DeleteUser(id);
         }
