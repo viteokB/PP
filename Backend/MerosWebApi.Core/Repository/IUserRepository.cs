@@ -21,6 +21,6 @@ namespace MerosWebApi.Core.Repository
 
         public Task<User> UpdateUser(User user);
 
-        public Task DeleteUser(User user);
+        public Task<bool> DeleteUser(Guid userId);
     }
 }

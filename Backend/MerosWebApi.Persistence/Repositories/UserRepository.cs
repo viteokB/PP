@@ -28,11 +28,18 @@ namespace MerosWebApi.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteUser(User user)
+        public async Task<bool> DeleteUser(Guid userId)
         {
-            var dbUser = PropertyAssigner.Map<DatabaseUser, User>(user);
+            var dbUser = await _dbContext.Users.FindAsync(userId);
 
-            _dbContext.Users.Remove(dbUser);
+            if (dbUser != null)
+            {
+                _dbContext.Users.Remove(dbUser);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<User> GetUserByEmail(string email)
