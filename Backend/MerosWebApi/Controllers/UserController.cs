@@ -8,6 +8,7 @@ using System.Net;
 using MerosWebApi.Application.Common.SecurityHelpers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using System.Web;
 
 namespace MerosWebApi.Controllers
 {
@@ -138,6 +139,7 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        [Authorize]
         [HttpPatch("{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateReqDto dto)
         {
@@ -157,6 +159,39 @@ namespace MerosWebApi.Controllers
             catch (AppException ex)
             {
                 return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("password-reset")]
+        public async Task<ActionResult> PasswordResetAsync([FromBody] PasswordResetDto dto)
+        {
+            try
+            {
+                await _userService.PasswordResetAsync(dto);
+                return NoContent();
+            }
+            catch (EmailNotSentException ex)
+            {
+                return StatusCode((int)HttpStatusCode.BadGateway, new { Message = ex.Message });
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("confirm-password-reset")]
+        public async Task<ActionResult> ConfirmPasswordResetAsync([FromQuery] string code, [FromQuery] string email)
+        {
+            try
+            {
+                return Ok(await _userService.ConfirmResetPasswordAsync(code, HttpUtility.UrlDecode(email)));
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(new  { Message = ex.Message });
             }
         }
 
