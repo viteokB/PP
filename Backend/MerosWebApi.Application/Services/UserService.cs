@@ -97,7 +97,7 @@ namespace MerosWebApi.Application.Services
         //Did
         public async Task<GetDetailsResDto> RegisterAsync(RegisterReqDto dto)
         {
-            if(string.IsNullOrEmpty(dto.Password))
+            if (string.IsNullOrEmpty(dto.Password))
                 throw new InvalidPasswordException("Password is required");
 
             var existingUser = await _repository.GetUserByEmail(dto.Email);
@@ -150,15 +150,47 @@ namespace MerosWebApi.Application.Services
             return _mapper.Map<User, GetDetailsResDto>(user);
         }
 
-        public async Task<GetDetailsResDto> UpdateAsync(string email, string userEmail,
+        public async Task<GetDetailsResDto> UpdateAsync(Guid id, Guid userId,
             UpdateReqDto dto)
         {
-            throw new NotImplementedException();
+            if (userId != id)
+                throw new ForbiddenException();
+
+            var user = await _repository.GetUserById(id);
+
+            if (user == null)
+                throw new EntityNotFoundException("User not found");
+
+            if (dto.Full_name != null && dto.Full_name != user.Full_name)
+                user.Full_name = dto.Full_name;
+
+            if (dto.Email != null)
+            {
+                var emailSuccess = await ChangeEmailAsync(user, dto.Email);
+
+                if (!emailSuccess)
+                    throw new EmailNotSentException("Sending of confirmation email failed");
+            }
+
+            if (dto.Password != null)
+            {
+                var (passwordHash, passwordSalt) = _passwordHelper.CreateHash(dto.Password);
+
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+            }
+
+            user.UpdatedAt = DateTime.Now;
+            _repository.UpdateUser(user);
+
+            return _mapper.Map<User, GetDetailsResDto>(user);
         }
 
-        public async Task DeleteAsync(string email, string userEmail)
+        public async Task<bool> DeleteAsync(Guid id, Guid userId)
         {
-            throw new NotImplementedException();
+            if (userId != id) throw new ForbiddenException();
+
+            return await _repository.DeleteUser(id);
         }
 
         public async Task ConfirmEmailAsync(string code)
