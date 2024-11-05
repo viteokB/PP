@@ -244,7 +244,29 @@ namespace MerosWebApi.Application.Services
         public async Task<ConfirmResetPswdDto> ConfirmResetPasswordAsync(string code,
             string email)
         {
-            throw new NotImplementedException();
+            var user = await _repository.GetUserByResetCode(code, email);
+            
+            if(user == null || user.ResetPasswordCode == null)
+                throw new EntityNotFoundException("Invalid code.");
+
+            var secondsPassed = DateTime.Now.Subtract(user.ResetPasswordCreatedAt.GetValueOrDefault()).Seconds;
+            if (secondsPassed > _appSettings.ResetPasswordValidTime)
+                throw new AppException("This link has exprired... Please try to reset password again");
+
+            user.ResetPasswordCode = null;
+            user.ResetPasswordCount = 0;
+            user.ResetPasswordCreatedAt = null;
+
+            var newPassword = _passwordHelper.GenerateRandomString(8);
+
+            (user.PasswordHash, user.PasswordSalt) = _passwordHelper.CreateHash(newPassword);
+
+            _repository.UpdateUser(user);
+
+            var dto = ConfirmResetPswdDto.CreateFromUser(user);
+            dto.Password = newPassword;
+
+            return dto;
         }
 
         #region Private helper methods
