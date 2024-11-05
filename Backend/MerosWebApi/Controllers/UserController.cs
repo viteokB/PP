@@ -183,11 +183,12 @@ namespace MerosWebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet("confirm-password-reset")]
-        public async Task<ActionResult> ConfirmPasswordResetAsync([FromQuery] string code, [FromQuery] string email)
+        public async Task<ActionResult> ConfirmPasswordResetAsync([FromQuery] ConfirmResetPasswordQuery query)
         {
             try
             {
-                return Ok(await _userService.ConfirmResetPasswordAsync(code, HttpUtility.UrlDecode(email)));
+                return Ok(await _userService.ConfirmResetPasswordAsync(query.Code,
+                    HttpUtility.UrlDecode(query.Email)));
             }
             catch (AppException ex)
             {
