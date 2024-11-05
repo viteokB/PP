@@ -7,6 +7,7 @@ using MongoDB.Driver.Core.WireProtocol.Messages;
 using System.Net;
 using MerosWebApi.Application.Common.SecurityHelpers;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace MerosWebApi.Controllers
 {
@@ -16,9 +17,13 @@ namespace MerosWebApi.Controllers
     {
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        private readonly IAuthHelper _authHelper;
+
+        public UserController(IUserService userService, IAuthHelper authHelper)
         {
             _userService = userService;
+
+            _authHelper = authHelper;
         }
 
         [AllowAnonymous]
@@ -94,9 +99,9 @@ namespace MerosWebApi.Controllers
             {
                 return StatusCode((int)HttpStatusCode.BadGateway, new { Message = ex.Message });
             }
-            catch(AppException ex)
+            catch (AppException ex)
             {
-                return BadRequest(new  { Message = ex.Message });
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
@@ -108,6 +113,46 @@ namespace MerosWebApi.Controllers
             {
                 await _userService.ConfirmEmailAsync(code);
                 return NoContent();
+            }
+            catch (AppException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(Guid id)
+        {
+            try
+            {
+                var result = await _userService.DeleteAsync(id, _authHelper.GetUserId(this));
+                if (result == true)
+                    return Ok("User deleted");
+
+                return NotFound("User not found.");
+            }
+            catch (ForbiddenException ex)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, new { Message = ex.Message });
+            }
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateReqDto dto)
+        {
+            try
+            {
+                var user = await _userService.UpdateAsync(id, _authHelper.GetUserId(this), dto);
+                return Ok();
+            }
+            catch (ForbiddenException ex)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, new { Message = ex.Message });
+            }
+            catch (EmailNotSentException ex)
+            {
+                return StatusCode((int)HttpStatusCode.BadGateway, new { Message = ex.Message });
             }
             catch (AppException ex)
             {

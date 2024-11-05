@@ -92,6 +92,7 @@ namespace MerosWebApi.Application
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IAuthHelper, AuthHelper>();
 
             services.AddAutoMapper(config =>
             {
