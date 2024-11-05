@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AutoMapper;
 using MerosWebApi.Application.Common;
 using MerosWebApi.Application.Common.DTOs.UserService;
@@ -213,7 +214,31 @@ namespace MerosWebApi.Application.Services
 
         public async Task PasswordResetAsync(PasswordResetDto dto)
         {
-            throw new NotImplementedException();
+            var user = await _repository.GetUserByEmail(dto.Email);
+            if (user == null)
+                throw new EntityNotFoundException("Something went wrong... Please contact support.");
+
+            var secondsPassed = DateTime.Now.Subtract(user.ResetPasswordCreatedAt.GetValueOrDefault()).Seconds;
+
+            var isMaxCountExceeded = user.ResetPasswordCount >= _appSettings.MaxResetPasswordCount;
+            var isWaitingTimePassed = secondsPassed > _appSettings.ResetPasswordWaitingTime;
+
+            if (isMaxCountExceeded && !isWaitingTimePassed)
+            {
+                var secondsToWait = _appSettings.ResetPasswordWaitingTime - secondsPassed;
+                throw new TooManyResetPasswordAttemptsException(
+                    $"You must wait for {secondsToWait} seconds before you try reset password again");
+            }
+
+            user.ResetPasswordCode = _passwordHelper.GenerateRandomString(20) + Guid.NewGuid();
+            user.ResetPasswordCount += 1;
+            user.ResetPasswordCreatedAt = DateTime.Now;
+
+            var emailSuccess = await SentResetPasswordCode(user);
+            if (!emailSuccess)
+                throw new EmailNotSentException("Sending of email failed.");
+
+            _repository.UpdateUser(user);
         }
 
         public async Task<ConfirmResetPswdDto> ConfirmResetPasswordAsync(string code,
@@ -223,6 +248,26 @@ namespace MerosWebApi.Application.Services
         }
 
         #region Private helper methods
+
+        private async Task<bool> SentResetPasswordCode(User user)
+        {
+            // Prepare email template.
+            var parentDir = Directory.GetParent(Directory.GetCurrentDirectory());
+            string relativePath = Path.Combine(parentDir.FullName,
+                "MerosWebApi.Application/Common/EmailSender/EmailTemplates/Email_PasswordReset.html");
+
+            await using var stream = File.OpenRead(relativePath);
+            
+            var encPasswordCode = HttpUtility.UrlEncode(user.ResetPasswordCode);
+            var encEmail = HttpUtility.UrlEncode(user.Email);
+            var emailBody = await new StreamReader(stream).ReadToEndAsync();
+            emailBody = emailBody.Replace("{{APP_NAME}}", _appSettings.Name);
+            emailBody = emailBody.Replace("{{PASSWORD_RESET_CONFIRM_URL}}",
+                $"{_appSettings.ResetPasswordUrl}?code={encPasswordCode}&email={encEmail}");
+
+            // Send an email.
+            return await _emailSender.SendAsync(user.Email, "Reset your password", emailBody);
+        }
 
         private async Task<bool> ChangeEmailAsync(User user, string newEmail)
         {

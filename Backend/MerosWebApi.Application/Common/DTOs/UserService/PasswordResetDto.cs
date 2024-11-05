@@ -8,6 +8,6 @@ namespace MerosWebApi.Application.Common.DTOs.UserService
 {
     public class PasswordResetDto
     {
-
+        public string Email { get; set; }
     }
 }

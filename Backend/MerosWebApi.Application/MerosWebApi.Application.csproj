@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <None Remove="Common\EmailSender\EmailTemplates\Email_ConfirmEmail.html" />
+    <None Remove="Common\EmailSender\EmailTemplates\Email_PasswordReset.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Common\EmailSender\EmailTemplates\Email_PasswordReset.html" />
   </ItemGroup>
 
   <ItemGroup>
