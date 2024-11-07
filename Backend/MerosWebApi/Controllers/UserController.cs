@@ -27,8 +27,15 @@ namespace MerosWebApi.Controllers
             _authHelper = authHelper;
         }
 
+        /// <summary>
+        /// Authenticates the user
+        /// </summary>
+        /// <param name="reqDto">The request data</param>
+        /// <returns>The result containing user info and authorization token, if authentication was successful
+        /// </returns>
         [AllowAnonymous]
         [HttpPost("authenticate")]
+        [ActionName(nameof(AuthenticateAsync))]
         public async Task<ActionResult<AuthenticationResDto>> AuthenticateAsync(
             [FromBody] AuthenticateReqDto reqDto)
         {
@@ -48,6 +55,7 @@ namespace MerosWebApi.Controllers
 
         [Authorize]
         [HttpGet("{id}")]
+        [ActionName(nameof(GetDetailsAsync))]
         public async Task<ActionResult<GetDetailsResDto>> GetDetailsAsync(Guid id)
         {
             try
@@ -66,6 +74,7 @@ namespace MerosWebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet("refresh-token")]
+        [ActionName(nameof(RefreshToken))]
         public async Task<ActionResult> RefreshToken(string token)
         {
             try
@@ -88,13 +97,14 @@ namespace MerosWebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
+        [ActionName(nameof(RegisterAsync))]
         public async Task<ActionResult> RegisterAsync([FromBody] RegisterReqDto dto)
         {
             try
             {
                 var user = await _userService.RegisterAsync(dto);
-                return Ok();
-                //return CreatedAtAction(nameof(GetDetailsAsync), new {id = user.Id}, user);
+
+                return CreatedAtAction(nameof(GetDetailsAsync), new { id = user.Id }, user);
             }
             catch (EmailNotSentException ex)
             {
@@ -108,6 +118,7 @@ namespace MerosWebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet("confirm-email")]
+        [ActionName(nameof(ConfirmEmailAsync))]
         public async Task<ActionResult> ConfirmEmailAsync(string code)
         {
             try
@@ -123,13 +134,14 @@ namespace MerosWebApi.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
+        [ActionName(nameof(DeleteAsync))]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
             try
             {
                 var result = await _userService.DeleteAsync(id, _authHelper.GetUserId(this));
                 if (result == true)
-                    return Ok("User deleted");
+                    return NoContent();
 
                 return NotFound("User not found.");
             }
@@ -141,12 +153,13 @@ namespace MerosWebApi.Controllers
 
         [Authorize]
         [HttpPatch("{id}")]
+        [ActionName(nameof(UpdateAsync))]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateReqDto dto)
         {
             try
             {
                 var user = await _userService.UpdateAsync(id, _authHelper.GetUserId(this), dto);
-                return Ok();
+                return CreatedAtAction(nameof(GetDetailsAsync), new {id = user.Id}, user);
             }
             catch (ForbiddenException ex)
             {
@@ -164,6 +177,7 @@ namespace MerosWebApi.Controllers
 
         [AllowAnonymous]
         [HttpPost("password-reset")]
+        [ActionName(nameof(PasswordResetAsync))]
         public async Task<ActionResult> PasswordResetAsync([FromBody] PasswordResetDto dto)
         {
             try
@@ -183,6 +197,7 @@ namespace MerosWebApi.Controllers
 
         [AllowAnonymous]
         [HttpGet("confirm-password-reset")]
+        [ActionName(nameof(ConfirmPasswordResetAsync))]
         public async Task<ActionResult> ConfirmPasswordResetAsync([FromQuery] ConfirmResetPasswordQuery query)
         {
             try
