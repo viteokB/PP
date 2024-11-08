@@ -46,7 +46,7 @@ namespace MerosWebApi.Application.Services
             _tokenGenerator = generator;
         }
 
-        public async Task<(AuthenticationResDto, RefreshToken)> AuthenticateAsync(AuthenticateReqDto dto)
+        public async Task<AuthenticationResDto> AuthenticateAsync(AuthenticateReqDto dto)
         {
             var user = await _repository.GetUserByEmail(dto.Email);
 
@@ -64,6 +64,7 @@ namespace MerosWebApi.Application.Services
                 if (isMaxCountExceeded && !isWaitingTimePassed)
                 {
                     var secondsToWait = _appSettings.LoginFailedWaitingTime - secondsPassed;
+                    
                     throw new TooManyFailedLoginAttemptsException(string.Format(
                         "You must wait for {0} seconds before you try to log in again.", secondsToWait));
                 }
@@ -90,9 +91,11 @@ namespace MerosWebApi.Application.Services
             await _repository.UpdateUser(user);
 
             var responseDto = _mapper.Map<User, AuthenticationResDto>(user);
-            responseDto.Token = _tokenGenerator.GenerateAccessToken(user.Id.ToString());
 
-            return (responseDto, refreshToken);
+            responseDto.AccessToken = _tokenGenerator.GenerateAccessToken(user.Id.ToString());
+            responseDto.RefreshToken = refreshToken.Token;
+
+            return responseDto;
         }
 
         //Did
@@ -110,6 +113,7 @@ namespace MerosWebApi.Application.Services
 
             var user = new User
             {
+                Id = Guid.NewGuid(),
                 Full_name = dto.Full_name,
                 CreatedAt = DateTime.Now,
                 PasswordHash = passwordHash,

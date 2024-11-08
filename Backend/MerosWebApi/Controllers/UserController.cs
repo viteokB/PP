@@ -42,10 +42,8 @@ namespace MerosWebApi.Controllers
             try
             {
                 var authecateResult = await _userService.AuthenticateAsync(reqDto);
-                SetRefreshTokenToCookie(authecateResult.Item2);
-                Response.Cookies.Append("tasty", authecateResult.Item1.Token);
 
-                return Ok(authecateResult.Item1);
+                return Ok(authecateResult);
             }
             catch (AppException ex)
             {
@@ -80,7 +78,6 @@ namespace MerosWebApi.Controllers
             try
             {
                 var newToken = await _userService.RefreshAccessToken(token);
-                Response.Cookies.Append("tasty", newToken);
 
                 return Ok(newToken);
             }
