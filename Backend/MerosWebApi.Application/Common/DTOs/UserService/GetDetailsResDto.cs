@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using MerosWebApi.Application.Common.Mapping;
-using MerosWebApi.Core.Models;
+﻿using MerosWebApi.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MerosWebApi.Application.Common.DTOs.UserService
 {
-    public class GetDetailsResDto : IMapWith<User>
+    public class GetDetailsResDto
     {
         public Guid Id { get; set; }
         public string Full_name { get; set; }
@@ -24,23 +22,18 @@ namespace MerosWebApi.Application.Common.DTOs.UserService
 
         public bool IsActive { get; set; }
 
-        public void Mapping(Profile profile)
+        public static GetDetailsResDto Map(User user)
         {
-            profile.CreateMap<User, GetDetailsResDto>()
-                .ForMember(res => res.Id,
-                    opt => opt.MapFrom(user => user.Id))
-                .ForMember(res => res.Full_name,
-                    opt => opt.MapFrom(user => user.Full_name))
-                .ForMember(res => res.Email,
-                    opt => opt.MapFrom(user => user.Email))
-                .ForMember(res => res.CreatedAt,
-                    opt => opt.MapFrom(user => user.CreatedAt))
-                .ForMember(res => res.UpdatedAt,
-                    opt => opt.MapFrom(user => user.UpdatedAt))
-                .ForMember(res => res.LastLoginAt,
-                    opt => opt.MapFrom(user => user.LastLoginAt))
-                .ForMember(res => res.IsActive,
-                    opt => opt.MapFrom(user => user.IsActive));
+            return new GetDetailsResDto
+            {
+                Id = user.Id,
+                Full_name = user.Full_name,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+                LastLoginAt = user.LastLoginAt,
+                IsActive = user.IsActive
+            };
         }
     }
 }

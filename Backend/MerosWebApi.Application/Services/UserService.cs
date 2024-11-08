@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using AutoMapper;
 using MerosWebApi.Application.Common;
 using MerosWebApi.Application.Common.DTOs.UserService;
 using MerosWebApi.Application.Common.Exceptions;
@@ -26,8 +25,6 @@ namespace MerosWebApi.Application.Services
 
         private readonly ITokenGenerator _tokenGenerator;
 
-        private readonly IMapper _mapper;
-
         private readonly IEmailSender _emailSender;
 
         private readonly AppSettings _appSettings;
@@ -35,11 +32,10 @@ namespace MerosWebApi.Application.Services
         private readonly EmbeddedFileProvider _embedded;
 
         public UserService(IUserRepository repository, IPasswordHelper passwordHelper,
-            IMapper mapper, IEmailSender emailSender, AppSettings appSettings, ITokenGenerator generator)
+            IEmailSender emailSender, AppSettings appSettings, ITokenGenerator generator)
         {
             _repository = repository;
             _passwordHelper = passwordHelper;
-            _mapper = mapper;
             _emailSender = emailSender;
             _appSettings = appSettings;
             _embedded = new EmbeddedFileProvider(Assembly.GetExecutingAssembly());
@@ -90,7 +86,7 @@ namespace MerosWebApi.Application.Services
 
             await _repository.UpdateUser(user);
 
-            var responseDto = _mapper.Map<User, AuthenticationResDto>(user);
+            var responseDto = AuthenticationResDto.Map(user);
 
             responseDto.AccessToken = _tokenGenerator.GenerateAccessToken(user.Id.ToString());
             responseDto.RefreshToken = refreshToken.Token;
@@ -129,7 +125,7 @@ namespace MerosWebApi.Application.Services
 
             await _repository.AddUser(user);
 
-            return _mapper.Map<User, GetDetailsResDto>(user);
+            return GetDetailsResDto.Map(user);
         }
 
         public async Task<string> RefreshAccessToken(string refreshToken)
@@ -152,7 +148,7 @@ namespace MerosWebApi.Application.Services
             if (user == null)
                 throw new EntityNotFoundException("User not found");
 
-            return _mapper.Map<User, GetDetailsResDto>(user);
+            return GetDetailsResDto.Map(user);
         }
 
         public async Task<GetDetailsResDto> UpdateAsync(Guid id, Guid userId,
@@ -188,7 +184,7 @@ namespace MerosWebApi.Application.Services
             user.UpdatedAt = DateTime.Now;
             _repository.UpdateUser(user);
 
-            return _mapper.Map<User, GetDetailsResDto>(user);
+            return GetDetailsResDto.Map(user);
         }
 
         public async Task<bool> DeleteAsync(Guid id, Guid userId)

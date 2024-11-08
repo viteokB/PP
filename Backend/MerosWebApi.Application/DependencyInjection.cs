@@ -10,7 +10,6 @@ using MerosWebApi.Application.Interfaces;
 using MerosWebApi.Application.Common;
 using MerosWebApi.Application.Services;
 using MerosWebApi.Application.Common.SecurityHelpers;
-using MerosWebApi.Application.Common.Mapping;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -96,12 +95,6 @@ namespace MerosWebApi.Application
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IAuthHelper, AuthHelper>();
-
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile(new AssemblyMappingProfile(Assembly.GetExecutingAssembly()));
-            });
-
 
             return services;
         }
