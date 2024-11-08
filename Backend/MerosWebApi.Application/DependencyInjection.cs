@@ -144,7 +144,7 @@ namespace MerosWebApi.Application
                         },
                         OnMessageReceived = context =>
                         {
-                            context.Token = context.Request.Cookies["tasty"];
+                            context.Token = context.Request.Headers.Authorization;
 
                             return Task.CompletedTask;
                         }
@@ -156,10 +156,10 @@ namespace MerosWebApi.Application
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = false,
+                        ValidateLifetime = true,
                         ValidateAudience = false
                     };
-                })
-                .AddCookie();
+                });
 
             services.AddAuthorization();
 
