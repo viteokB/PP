@@ -27,26 +27,18 @@ namespace MerosWebApi.Application.Common.DTOs.UserService
         public void Mapping(Profile profile)
         {
             profile.CreateMap<User, GetDetailsResDto>()
+                .ForMember(res => res.Id,
+                    opt => opt.MapFrom(user => user.Id))
                 .ForMember(res => res.Full_name,
-                    opt => opt.MapFrom(user => user.Full_name));
-
-            profile.CreateMap<User, GetDetailsResDto>()
+                    opt => opt.MapFrom(user => user.Full_name))
                 .ForMember(res => res.Email,
-                    opt => opt.MapFrom(user => user.Email));
-
-            profile.CreateMap<User, GetDetailsResDto>()
+                    opt => opt.MapFrom(user => user.Email))
                 .ForMember(res => res.CreatedAt,
-                    opt => opt.MapFrom(user => user.CreatedAt));
-
-            profile.CreateMap<User, GetDetailsResDto>()
+                    opt => opt.MapFrom(user => user.CreatedAt))
                 .ForMember(res => res.UpdatedAt,
-                    opt => opt.MapFrom(user => user.UpdatedAt));
-
-            profile.CreateMap<User, GetDetailsResDto>()
+                    opt => opt.MapFrom(user => user.UpdatedAt))
                 .ForMember(res => res.LastLoginAt,
-                    opt => opt.MapFrom(user => user.LastLoginAt));
-
-            profile.CreateMap<User, GetDetailsResDto>()
+                    opt => opt.MapFrom(user => user.LastLoginAt))
                 .ForMember(res => res.IsActive,
                     opt => opt.MapFrom(user => user.IsActive));
         }
