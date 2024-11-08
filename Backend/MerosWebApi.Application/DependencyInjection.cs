@@ -18,8 +18,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MerosWebApi.Application.Common.DTOs;
 using MerosWebApi.Application.Common.ValidatorOptions;
 using MerosWebApi.Core.Repository;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MerosWebApi.Application
 {
@@ -177,6 +180,14 @@ namespace MerosWebApi.Application
 
             // Регистрация валидаторов из текущей сборки
             services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        return new BadRequestObjectResult(
+                            new MyResponseMessage{ Message = "One or more validation errors occurred." });
+                    };
+                })
                 .AddFluentValidation(config =>
                 {
                     config.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());

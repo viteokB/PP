@@ -9,6 +9,7 @@ using MerosWebApi.Application.Common.SecurityHelpers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Web;
+using MerosWebApi.Application.Common.DTOs;
 
 namespace MerosWebApi.Controllers
 {
@@ -47,7 +48,7 @@ namespace MerosWebApi.Controllers
             }
             catch (AppException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MyResponseMessage{Message = ex.Message});
             }
         }
 
@@ -62,11 +63,11 @@ namespace MerosWebApi.Controllers
             }
             catch (EntityNotFoundException ex)
             {
-                return NotFound(new { Message = ex.Message });
+                return NotFound(new MyResponseMessage { Message = ex.Message });
             }
             catch (AppException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
 
@@ -83,11 +84,11 @@ namespace MerosWebApi.Controllers
             }
             catch (EntityNotFoundException ex)
             {
-                return NotFound(new { Message = ex.Message });
+                return NotFound(new MyResponseMessage { Message = ex.Message });
             }
             catch (AppException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
 
@@ -105,11 +106,11 @@ namespace MerosWebApi.Controllers
             }
             catch (EmailNotSentException ex)
             {
-                return StatusCode((int)HttpStatusCode.BadGateway, new { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage { Message = ex.Message });
             }
             catch (AppException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
 
@@ -125,7 +126,7 @@ namespace MerosWebApi.Controllers
             }
             catch (AppException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
 
@@ -144,7 +145,7 @@ namespace MerosWebApi.Controllers
             }
             catch (ForbiddenException ex)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden, new { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.Forbidden, new MyResponseMessage { Message = ex.Message });
             }
         }
 
@@ -160,15 +161,15 @@ namespace MerosWebApi.Controllers
             }
             catch (ForbiddenException ex)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden, new { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.Forbidden, new MyResponseMessage { Message = ex.Message });
             }
             catch (EmailNotSentException ex)
             {
-                return StatusCode((int)HttpStatusCode.BadGateway, new { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage { Message = ex.Message });
             }
             catch (AppException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
 
@@ -184,11 +185,11 @@ namespace MerosWebApi.Controllers
             }
             catch (EmailNotSentException ex)
             {
-                return StatusCode((int)HttpStatusCode.BadGateway, new { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage { Message = ex.Message });
             }
             catch (AppException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
 
