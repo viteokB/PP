@@ -1,8 +1,10 @@
 using System.Reflection;
+using Asp.Versioning;
 using FluentValidation.AspNetCore;
 using MerosWebApi.Persistence;
 using MerosWebApi.Application;
 using MerosWebApi.Application.Common.DTOs.UserService.DtoValidators;
+using MerosWebApi.ForSwagger;
 using Microsoft.OpenApi.Models;
 
 namespace MerosWebApi
@@ -27,6 +29,8 @@ namespace MerosWebApi
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
             builder.Services.AddSwaggerGen(swagger =>
             {
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -56,16 +60,24 @@ namespace MerosWebApi
                         new string[] {}
                     }
                 });
-                swagger.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Meros WebApi",
-                    Version = "v1"
-                });
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 swagger.IncludeXmlComments(xmlPath);
 
                 swagger.SupportNonNullableReferenceTypes();
+            });
+
+            builder.Services.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+                o.ReportApiVersions = true;
+                o.ApiVersionReader = ApiVersionReader.Combine(
+                    new HeaderApiVersionReader("api-version"));
+            }).AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
             });
 
             var app = builder.Build();
@@ -76,7 +88,7 @@ namespace MerosWebApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meros WebApi");
+
                 });
             }
 
@@ -84,7 +96,6 @@ namespace MerosWebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
