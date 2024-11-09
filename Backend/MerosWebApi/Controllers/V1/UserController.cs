@@ -9,12 +9,15 @@ using MerosWebApi.Application.Common.SecurityHelpers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Web;
+using Asp.Versioning;
+using FluentValidation.Results;
 using MerosWebApi.Application.Common.DTOs;
 
-namespace MerosWebApi.Controllers
+namespace MerosWebApi.Controllers.V1
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -37,6 +40,9 @@ namespace MerosWebApi.Controllers
         [AllowAnonymous]
         [HttpPost("authenticate")]
         [ActionName(nameof(AuthenticateAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(AuthenticationResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<AuthenticationResDto>> AuthenticateAsync(
             [FromBody] AuthenticateReqDto reqDto)
         {
@@ -48,13 +54,22 @@ namespace MerosWebApi.Controllers
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage{Message = ex.Message});
+                return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Gets detailed information about the user
+        /// </summary>
+        /// <param name="id">User Id</param>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
         [ActionName(nameof(GetDetailsAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetDetailsResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<GetDetailsResDto>> GetDetailsAsync(Guid id)
         {
             try
@@ -71,10 +86,19 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Refresh access token
+        /// </summary>
+        /// <param name="token">Refresh token string</param>
+        /// <returns>Access token string</returns>
         [AllowAnonymous]
         [HttpGet("refresh-token")]
         [ActionName(nameof(RefreshToken))]
-        public async Task<ActionResult> RefreshToken(string token)
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<string>> RefreshToken(string token)
         {
             try
             {
@@ -92,10 +116,18 @@ namespace MerosWebApi.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Registers a new user
+        /// </summary>
+        /// <param name="dto">Register DTO</param>
+        /// <returns>GetDetailsResDto information about user</returns>
         [AllowAnonymous]
         [HttpPost("register")]
         [ActionName(nameof(RegisterAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetDetailsResDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadGateway)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> RegisterAsync([FromBody] RegisterReqDto dto)
         {
             try
@@ -114,9 +146,17 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Confirm user email after registration or email update
+        /// </summary>
+        /// <param name="code">Confirm email code</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("confirm-email")]
         [ActionName(nameof(ConfirmEmailAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> ConfirmEmailAsync(string code)
         {
             try
@@ -129,10 +169,18 @@ namespace MerosWebApi.Controllers
                 return BadRequest(new MyResponseMessage { Message = ex.Message });
             }
         }
-
+        /// <summary>
+        /// Deletes user
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns></returns>
         [Authorize]
         [HttpDelete("{id}")]
         [ActionName(nameof(DeleteAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.Forbidden)]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
             try
@@ -149,15 +197,26 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Update user data
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <param name="dto">DTO with update information</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPatch("{id}")]
         [ActionName(nameof(UpdateAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetDetailsResDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.Forbidden)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadGateway)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] UpdateReqDto dto)
         {
             try
             {
                 var user = await _userService.UpdateAsync(id, _authHelper.GetUserId(this), dto);
-                return CreatedAtAction(nameof(GetDetailsAsync), new {id = user.Id}, user);
+                return CreatedAtAction(nameof(GetDetailsAsync), new { id = user.Id }, user);
             }
             catch (ForbiddenException ex)
             {
@@ -173,9 +232,18 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Reset user password and send reset password code to user email
+        /// </summary>
+        /// <param name="dto">DTO with user Email</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("password-reset")]
         [ActionName(nameof(PasswordResetAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadGateway)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> PasswordResetAsync([FromBody] PasswordResetDto dto)
         {
             try
@@ -193,9 +261,17 @@ namespace MerosWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Confirm reset password using reset password code from email
+        /// </summary>
+        /// <param name="query">reset password code</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("confirm-password-reset")]
         [ActionName(nameof(ConfirmPasswordResetAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ConfirmResetPswdDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> ConfirmPasswordResetAsync([FromQuery] ConfirmResetPasswordQuery query)
         {
             try
@@ -205,7 +281,7 @@ namespace MerosWebApi.Controllers
             }
             catch (AppException ex)
             {
-                return BadRequest(new  { Message = ex.Message });
+                return BadRequest(new { ex.Message });
             }
         }
 
