@@ -1,3 +1,4 @@
+using System.Reflection;
 using FluentValidation.AspNetCore;
 using MerosWebApi.Persistence;
 using MerosWebApi.Application;
@@ -36,7 +37,7 @@ namespace MerosWebApi
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
                     Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
-                                  "Input JWT string only" +
+                                  "Input JWT string only " +
                                   "\r\n\r\nExample: \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6Im" +
                                   "M5Y2M1ZGM0LTg4NTktNDY4Yi04NDExLTFhZTMxYjYxODY5NyIsIm5iZiI6MTczMTA2NzIxNywiZXhwI" +
                                   "joxNzMxMDcwODE3LCJpYXQiOjE3MzEwNjcyMTd9.Gde5aETdODmv0HYHOh1a8CiX1UjTx3gTdev_9OJf49U\"",
@@ -55,6 +56,16 @@ namespace MerosWebApi
                         new string[] {}
                     }
                 });
+                swagger.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Meros WebApi",
+                    Version = "v1"
+                });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                swagger.IncludeXmlComments(xmlPath);
+
+                swagger.SupportNonNullableReferenceTypes();
             });
 
             var app = builder.Build();
@@ -63,7 +74,10 @@ namespace MerosWebApi
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meros WebApi");
+                });
             }
 
             app.UseHttpsRedirection();
