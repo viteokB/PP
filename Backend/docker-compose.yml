@@ -1,0 +1,10 @@
+services:
+  meroswebapi:
+    image: ${DOCKER_REGISTRY-}meroswebapi
+    build:
+      context: .
+      dockerfile: MerosWebApi/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+   
