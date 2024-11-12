@@ -12,11 +12,21 @@
   .main-container{
     @apply bg-background rounded-[32px] p-12
   }
+
+  .base-btn{
+    @apply bg-primary rounded-[12px] py-1.5 w-full text-white
+  }
+
   .arrow-btn{
     @apply p-1.5 bg-primary rounded-[18px]
   }
-  .base-input{
+
+  .meta-input{
     @apply rounded-[12px] bg-secondary-bg text-secondary-text
+  }
+
+  .base-input{
+    @apply  px-4 py-[9px] text-[16px] leading-[22px] w-full;
   }
 }
 
