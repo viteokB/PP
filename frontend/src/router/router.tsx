@@ -1,9 +1,5 @@
-import { createBrowserRouter, Outlet } from "react-router-dom"
-import App from "../App"
+import { createBrowserRouter } from "react-router-dom"
 import Auth from "../pages/Auth"
-import React from "react"
-import Header from "../components/Header"
-import Footer from "../components/Footer"
 import Layout from "../pages/Layout"
 import Home from "../pages/Home"
 
