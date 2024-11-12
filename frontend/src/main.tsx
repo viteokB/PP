@@ -1,34 +1,12 @@
 import React from "react"
 import { createRoot } from "react-dom/client"
 import { Provider } from "react-redux"
-import App from "./App"
 import { store } from "./app/store"
 import "./index.css"
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import Auth from "./pages/Auth"
+import { RouterProvider } from "react-router-dom"
+import App from "./App"
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App></App>
-  },
-  {
-    path: "/createform",
-    element: <div>йооооу</div>
-  },
-  {
-    path: "/profile",
-    element: <div>Личный профайл</div>
-  },
-  {
-    path: "/auth",
-    element: <Auth/>
-  },
-  {
-    path: "/register",
-    element: <div>Регистрация</div>
-  },
-])
+
 
 const container = document.getElementById("root")
 if (container) {
@@ -37,7 +15,7 @@ if (container) {
   root.render(
     <React.StrictMode>
       <Provider store={store}>
-        <RouterProvider router={router}></RouterProvider>
+        <App></App>
       </Provider>
     </React.StrictMode>,
   )
