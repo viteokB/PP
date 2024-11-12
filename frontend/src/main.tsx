@@ -5,6 +5,7 @@ import App from "./App"
 import { store } from "./app/store"
 import "./index.css"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import Auth from "./pages/Auth"
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/auth",
-    element: <div>Вход</div>
+    element: <Auth/>
   },
   {
     path: "/register",

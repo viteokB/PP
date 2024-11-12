@@ -8,3 +8,18 @@
     font-family: "Inter", system-ui, sans-serif;
   }
 }
+@layer components {
+  .main-container{
+    @apply bg-background rounded-[32px] p-12
+  }
+  .arrow-btn{
+    @apply p-1.5 bg-primary rounded-[18px]
+  }
+  .base-input{
+    @apply rounded-[12px] bg-secondary-bg text-secondary-text
+  }
+}
+
+*{
+  box-sizing: border-box;
+}

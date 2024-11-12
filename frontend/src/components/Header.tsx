@@ -4,10 +4,10 @@ import profile from "../assets/profile.svg"
 import { NavLink } from "react-router-dom"
 
 const Header: FC = () => {
-  const isAuth = true
+  const isAuth = false
   return (
     <header className="flex items-center text-[20px]">
-      <img className="pt-2.5" src={logo} />
+      <img className="pt-1.5" src={logo} />
       <nav className={"ml-6"}>
         <ul className={"flex gap-5"}>
           <li>
