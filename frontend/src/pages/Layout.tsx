@@ -6,7 +6,7 @@ import Footer from "../components/Footer"
 const Layout: FC = () => {
   return (
     <div
-      className="font-[inter] text-xl h-screen max-w-screen-xl mx-auto px-40 pt-6 pb-12 flex flex-col justify-between">
+      className="font-[inter] text-xl min-h-screen	 max-w-screen-xl mx-auto px-40 pt-6 pb-12 flex flex-col gap-12 justify-between">
       <Header />
       <Outlet />
       <Footer />

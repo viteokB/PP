@@ -32,7 +32,7 @@ const Auth: FC = () => {
             <span className={"block"}>Отправим вам код для регистрации</span>
         }
         <div>
-          <input type="text" className={"base-input px-4 py-[9px]"} placeholder={"Введите почту"} />
+          <input type="text" className={"meta-input px-4 py-[9px]"} placeholder={"Введите почту"} />
           <button className={"arrow-btn px-2.5 py-3.5 rounded-[12px] ml-2"}><img src={arrow} alt="" /></button>
         </div>
       </div>

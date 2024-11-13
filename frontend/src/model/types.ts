@@ -1,5 +1,5 @@
 export default interface IInput {
   type: "text" | "textarea" | "date" | "time" | "checkbox",
-  label?: string,
+  label?: string | undefined,
   onClick?: () => void,
 }

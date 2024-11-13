@@ -26,7 +26,7 @@
   }
 
   .base-input{
-    @apply  px-4 py-[9px] text-[16px] leading-[22px] w-full;
+    @apply  px-4 py-[9px] text-[16px] leading-[22px] w-full text-black;
   }
 }
 
