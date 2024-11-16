@@ -16,13 +16,13 @@ namespace MerosWebApi.Core.Models.Questions
             : base(text, nameof(FieldWithoutAnswer), required)
         {
             if (answers != null)
-                throw new FieldException("Should have no answers");
+                throw new FieldException($"{nameof(FieldWithoutAnswer)} не должно иметь варианты ответов");
         }
 
         public override List<string> SelectAnswer(params string[] answers)
         {
             if (answers.Length > 0)
-                throw new FieldException("Should have no answers");
+                throw new FieldException($"{nameof(FieldWithoutAnswer)} не должно присваивать ответ(ы)");
 
             return null;
         }

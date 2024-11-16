@@ -9,6 +9,8 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService
 {
     public class TimePeriodsResDto
     {
+        public string Id { get; set; }
+
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
@@ -21,6 +23,7 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService
         {
             return new TimePeriodsResDto
             {
+                Id = timePeriod.Id,
                 StartTime = timePeriod.StartTime,
                 EndTime = timePeriod.EndTime,
                 TotalPlaces = timePeriod.TotalPlaces,

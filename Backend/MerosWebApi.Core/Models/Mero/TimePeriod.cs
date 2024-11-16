@@ -30,10 +30,10 @@ namespace MerosWebApi.Core.Models.Mero
             int totalPlaces, int bookedPlaces = 0)
         {
             if (startTime < DateTime.Now || endTime <= startTime)
-                throw new NotValidTimePeriodException($"Не правильно заданное время для создания мероприятия " +
-                                                      $"{startTime} - {endTime}");
+                throw new NotValidTimePeriodException("Не правильный формат периода мероприятия");
+
             if (totalPlaces <= 0)
-                throw new NotValidTimePeriodException("Число мест на период должно быть больше нуля");
+                throw new NotValidTimePeriodException("Число мест на период мероприятия должно быть больше нуля");
             
             Id = id;
             StartTime = startTime;

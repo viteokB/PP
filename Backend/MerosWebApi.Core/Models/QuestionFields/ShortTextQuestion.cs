@@ -14,13 +14,16 @@ namespace MerosWebApi.Core.Models.Questions
             : base(text, nameof(ShortTextQuestion), required)
         {
             if (answers != null)
-                throw new FieldException("Should have no answers");
+                throw new FieldException($"{nameof(ShortTextQuestion)} не должно иметь варианты ответов");
         }
 
         public override List<string> SelectAnswer(params string[] answers)
         {
+            if (!Required && answers.Length == 0)
+                return answers.ToList();
+
             if (answers.Length != 1)
-                throw new FieldException("Should have only one answer");
+                throw new FieldException($"Поле {nameof(ShortTextQuestion)} должено иметь один ответ");
 
             return new List<string>() { answers[0] };
         }

@@ -4,12 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MerosWebApi.Application.Common.DTOs.MeroService;
+using MerosWebApi.Application.Common.Exceptions;
 using MerosWebApi.Application.Interfaces;
 using MerosWebApi.Core.Models;
+using MerosWebApi.Core.Models.Exceptions;
 using MerosWebApi.Core.Models.Mero;
 using MerosWebApi.Core.Models.QuestionFields;
 using MerosWebApi.Core.Repository;
 using MongoDB.Bson;
+using FieldException = MerosWebApi.Application.Common.Exceptions.MeroFieldException;
 
 namespace MerosWebApi.Application.Services
 {
@@ -25,10 +28,13 @@ namespace MerosWebApi.Application.Services
         {
             var mero = await _repository.GetMeroByIdAsync(id);
 
+            if (mero == null)
+                throw new MeroNotFoundException("Мероприятие не было найдено");
+
             return MeroResDto.Map(mero);
         }
 
-        public async Task CreateNewMeroAsync(string creatorId, MeroReqDto createReqDto)
+        public async Task<MeroResDto> CreateNewMeroAsync(string creatorId, MeroReqDto createReqDto)
         {
             var meroId = ObjectId.GenerateNewId().ToString();
 
@@ -36,29 +42,49 @@ namespace MerosWebApi.Application.Services
 
             foreach (var periodDto in createReqDto.Periods)
             {
-                var periodId = ObjectId.GenerateNewId().ToString();
+                try
+                {
+                    var periodId = ObjectId.GenerateNewId().ToString();
 
-                var timePeriod = TimePeriod.CreateTimePeriod(periodId, periodDto.StartTime, periodDto.EndTime,
-                    periodDto.TotalPlaces, 0);
+                    var timePeriod = TimePeriod.CreateTimePeriod(periodId, periodDto.StartTime, periodDto.EndTime,
+                        periodDto.TotalPlaces, 0);
 
-                _repository.AddTimePeriodAsync(timePeriod);
-                timePeriods.Add(timePeriod);
+                    _repository.AddTimePeriodAsync(timePeriod);
+                    timePeriods.Add(timePeriod);
+                }
+                catch (NotValidTimePeriodException ex)
+                {
+                    throw new MeroTimeException(periodDto, ex.Message);
+                }
             }
 
             var fields = new List<Field>();
 
             foreach (var fieldReqDto in createReqDto.Fields)
             {
-                var field = FieldFactoryMethod.CreateField(fieldReqDto.Text, fieldReqDto.Type, fieldReqDto.Required,
-                    fieldReqDto.Answers);
+                try
+                {
+                    var field = FieldFactoryMethod.CreateField(fieldReqDto.Text, fieldReqDto.Type, fieldReqDto.Required,
+                        fieldReqDto.Answers);
 
-                fields.Add(field);
+                    fields.Add(field);
+                }
+                catch (FieldTypeException ex)
+                {
+                    throw new MeroFieldException(fieldReqDto, ex.Message);
+                }
+                catch (MerosWebApi.Core.Models.Exceptions.FieldException ex)
+                {
+                    throw new MeroFieldException(fieldReqDto, ex.Message);
+                }
             }
 
-            var mero = Mero.CreateMero(meroId, createReqDto.Name, creatorId, createReqDto.CreatorEmail,
+            var mero = Mero.CreateMero(meroId, createReqDto.MeetName, creatorId, createReqDto.CreatorEmail,
                 createReqDto.Description, timePeriods, fields, null);
 
             await _repository.AddMeroAsync(mero);
+
+            return MeroResDto.Map(mero);
         }
 
         public Task UpdateMeroAsync(Mero mero)

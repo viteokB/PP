@@ -12,7 +12,7 @@ namespace MerosWebApi.Application.Interfaces
     {
         public Task<MeroResDto> GetMeroByIdAsync(string id);
 
-        public Task CreateNewMeroAsync(string creatorId, MeroReqDto createResDto);
+        public Task<MeroResDto> CreateNewMeroAsync(string creatorId, MeroReqDto createResDto);
 
         public Task UpdateMeroAsync(Mero mero);
 

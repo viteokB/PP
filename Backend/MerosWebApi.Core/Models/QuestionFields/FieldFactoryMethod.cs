@@ -50,7 +50,7 @@ namespace MerosWebApi.Core.Models.QuestionFields
         public static Field CreateField(string text, string type, bool required, List<string> answers)
         {
             if (!constructorInfos.TryGetValue(type, out var constructor))
-                throw new FieldTypeException("Передан неверный тип для создания поля");
+                throw new FieldTypeException($"Передан несуществующий тип для создания поля  - {type}");
 
             return constructor(text, required, answers);
         }

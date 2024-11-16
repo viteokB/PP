@@ -14,7 +14,8 @@ namespace MerosWebApi.Core.Models.Questions
             : base(questionText, nameof(SelectManyQuestion), required)
         {
             if (answers.Count < 1)
-                throw new FieldException($"Поле {nameof(SelectOneQuestion)} должно иметь как минимум один вариант");
+                throw new FieldException($"Поле {nameof(SelectManyQuestion)} должно иметь как минимум " +
+                                          $"один вариант ответа");
             
             PossibleAnswers = answers;
         }
@@ -24,7 +25,8 @@ namespace MerosWebApi.Core.Models.Questions
         public void AddPossibleAnswer(string answer)
         {
             if (string.IsNullOrWhiteSpace(answer))
-                throw new FieldException($"String should be not null, empty, or whitespace");
+                throw new FieldException($"В {nameof(SelectManyQuestion)} ответ должен быть не null, или " +
+                                          $"пустой строкой, или пробелом");
 
             PossibleAnswers.Add(answer);
         }
@@ -36,13 +38,17 @@ namespace MerosWebApi.Core.Models.Questions
 
         public override List<string> SelectAnswer(params string[] answers)
         {
+            if (answers.Length == 0 && !Required)
+                return answers.ToList();
+
             if (answers.Length == 0)
-                throw new FieldException("Should have more than zero possible answer");
+                throw new FieldException($"Поле {nameof(SelectManyQuestion)} должено иметь минимум" +
+                                         $" один ответа");
 
             foreach (var answer in answers)
             {
                 if(!answers.Any(ans => ans == answer))
-                    throw new FieldException("Questions answers doesn't exists in possible answers");
+                    throw new FieldException($"В {nameof(SelectManyQuestion)} не существует такого ответа");
             }
                 
 

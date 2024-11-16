@@ -10,7 +10,7 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService
 {
     public class MeroReqDto
     {
-        public string Name { get; set; }
+        public string MeetName { get; set; }
 
         public string Description { get; set; }
 

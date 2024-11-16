@@ -10,7 +10,8 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService
 {
     public class MeroResDto
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
+        public string MeetName { get; set; }
 
         public string Description { get; set; }
 
@@ -24,7 +25,8 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService
         {
             return new MeroResDto
             {
-                Name = mero.Name,
+                Id = mero.Id,
+                MeetName = mero.Name,
                 CreatorEmail = mero.CreatorEmail,
                 Description = mero.Description,
                 Fields = mero.Fields
