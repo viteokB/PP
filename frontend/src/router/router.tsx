@@ -3,6 +3,7 @@ import Auth from "../pages/Auth"
 import Layout from "../pages/Layout"
 import Home from "../pages/Home"
 import CreateForm from "../pages/CreateForm"
+import SuccessForm from "../pages/SuccessForm"
 
 export const router= createBrowserRouter([
   {
@@ -16,6 +17,10 @@ export const router= createBrowserRouter([
       {
         path: "/createform",
         element: <CreateForm/>
+      },
+      {
+        path: "/successform",
+        element: <SuccessForm/>
       },
       {
         path: "/profile",
