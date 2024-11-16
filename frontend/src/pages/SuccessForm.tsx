@@ -1,8 +1,11 @@
-import type { FC } from "react"
+import type { FC} from "react";
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import copy from '../assets/copy.svg'
 import qrcode from '../assets/qrcode.svg'
+import QrModal from "../components/QrModal"
 const SuccessForm:FC = () => {
+  const [isOpen, setIsOpen] = useState(false)
   return (
     <>
       <div className={"main-container flex flex-col gap-8"}>
@@ -15,7 +18,11 @@ const SuccessForm:FC = () => {
           </p>
         </div>
         <div className={"flex flex-col gap-4"}>
-          <button className={" meta-input base-input rounded-[32px] text-xl text-center text-white bg-[url('assets/qrcodebg.svg')]"}><img src={qrcode} alt="qrcode" className={"inline-block"} />Открыть QR-код</button>
+          <button onClick={()=> setIsOpen(true)} className={" meta-input base-input rounded-[32px] text-xl text-center text-white bg-[url('assets/qrcodebg.svg')]"}>
+            <img src={qrcode} alt="qrcode" className={"inline-block"} />
+            Открыть QR-код
+          </button>
+          <QrModal isOpen={isOpen} isClose={()=>setIsOpen(false)} />
           <span className={"before:content-[''] before:border-black before:mr-4 before:w-full block text-center text-secondary-text"}>
             Или поделитесь текстовым кодом
           </span>
