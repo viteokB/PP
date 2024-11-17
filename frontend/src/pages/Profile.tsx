@@ -3,6 +3,7 @@ import Input from "../components/input/Input"
 import logout from "../assets/logout.svg"
 import FormCard from "../components/FormCard"
 import addEventCard from "../assets/addEventCard.svg"
+import { Link } from "react-router-dom"
 
 const Profile: FC = () => {
   const mock: Array<FormCardProps> = [{
@@ -71,10 +72,11 @@ const Profile: FC = () => {
               )
             )
           }
-
-          <button className={"bg-secondary-bg size-[266px] rounded-2xl"}>
-            <img src={addEventCard} alt="" className={"m-auto"}/>
-          </button>
+          <Link to={"/createform"}>
+            <button className={"bg-secondary-bg size-[266px] rounded-2xl"}>
+              <img src={addEventCard} alt="" className={"m-auto"} />
+            </button>
+          </Link>
         </div>
       </div>
     </>
