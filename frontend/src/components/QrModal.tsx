@@ -12,7 +12,7 @@ const QrModal = ({isOpen, isClose}: ModalProps) => {
   return createPortal(
     <div onClick={isClose} className={"absolute top-0 left-0 flex justify-center items-center w-full min-h-full bg-[#0000004D]"}>
       <div className={"flex flex-col max-w-[340px] items-center gap-8 p-12 bg-white rounded-[32px]"}>
-        <h1 className={"text-[32px] font-semibold text-center"}>QR-код вашего
+        <h1 className={"text-[32px] font-semibold text-center leading-[34px]"}>QR-код вашего
           мероприятия</h1>
           <QRCode
             size={240}
