@@ -13,7 +13,7 @@ namespace MerosWebApi.Core.Models.Questions
         public SelectOneQuestion(string questionText, bool required, List<string> answers)
             : base(questionText, nameof(SelectOneQuestion), required)
         {
-            if (answers.Count < 1)
+            if (answers == null || answers.Count < 1)
                 throw new FieldException($"Поле {nameof(SelectOneQuestion)} должно иметь как " +
                                          $"минимум один вариант ответа");
             

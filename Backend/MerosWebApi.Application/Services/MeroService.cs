@@ -38,6 +38,63 @@ namespace MerosWebApi.Application.Services
         {
             var meroId = ObjectId.GenerateNewId().ToString();
 
+            var timePeriods = CreateMeroTimePeriods(createReqDto);
+
+            var fields = CreateMeroFields(createReqDto);
+
+            var mero = Mero.CreateMero(meroId, createReqDto.MeetName, creatorId, createReqDto.CreatorEmail,
+                createReqDto.Description, timePeriods, fields, null);
+
+            await _repository.AddMeroAsync(mero);
+
+            return MeroResDto.Map(mero);
+        }
+
+        public async Task<QuerryStatus> DelereMeroByIdAsync(string userId, string meroId)
+        {
+            var mero = await _repository.GetMeroByIdAsync(meroId);
+            if (mero == null)
+                throw new MeroNotFoundException("Мероприятие не было найдено");
+
+            if (mero.CreatorId != userId)
+                throw new ForbiddenException("Доступ для удаления запрещен.");
+
+            return await _repository.DeleteMeroByIdAsync(meroId);
+        }
+
+        public async Task<MeroResDto> FullMeroUpdateAsync(string userId, string meroId, MeroReqDto updateMeroData)
+        {
+            var meroInDb = await _repository.GetMeroByIdAsync(meroId);
+            if (meroInDb == null)
+                throw new MeroNotFoundException("Мероприятие не было найдено");
+
+            if (meroInDb.CreatorId != userId)
+                throw new ForbiddenException("Доступ для удаления запрещен.");
+
+            if (meroInDb.TimePeriods.Any(p => p.BookedPlaces > 0))
+                throw new NotPossibleUpdateException("Не возможно обновить на мероприятие уже есть записавшиеся");
+
+            var timePeriods = CreateMeroTimePeriods(updateMeroData);
+
+            var fields = CreateMeroFields(updateMeroData);
+
+            var mero = Mero.CreateMero(meroId, updateMeroData.MeetName, userId, updateMeroData.CreatorEmail,
+                updateMeroData.Description, timePeriods, fields, null);
+
+            var querryStatus = await _repository.DeleteMeroByIdAsync(meroId);
+            if (!querryStatus.IsSuccess)
+                throw new NotPossibleUpdateException($"Не возможно обновить - {querryStatus.Message}");
+
+
+            await _repository.AddMeroAsync(mero);
+
+            return MeroResDto.Map(mero);
+        }
+
+        #region Helpers
+
+        private List<TimePeriod> CreateMeroTimePeriods(MeroReqDto createReqDto)
+        {
             var timePeriods = new List<TimePeriod>();
 
             foreach (var periodDto in createReqDto.Periods)
@@ -58,6 +115,11 @@ namespace MerosWebApi.Application.Services
                 }
             }
 
+            return timePeriods;
+        }
+
+        private List<Field> CreateMeroFields(MeroReqDto createReqDto)
+        {
             var fields = new List<Field>();
 
             foreach (var fieldReqDto in createReqDto.Fields)
@@ -79,17 +141,9 @@ namespace MerosWebApi.Application.Services
                 }
             }
 
-            var mero = Mero.CreateMero(meroId, createReqDto.MeetName, creatorId, createReqDto.CreatorEmail,
-                createReqDto.Description, timePeriods, fields, null);
-
-            await _repository.AddMeroAsync(mero);
-
-            return MeroResDto.Map(mero);
+            return fields;
         }
 
-        public Task UpdateMeroAsync(Mero mero)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
     }
 }

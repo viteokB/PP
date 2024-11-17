@@ -39,7 +39,7 @@ namespace MerosWebApi.Core.Models.Mero
             StartTime = startTime;
             EndTime = endTime;
             TotalPlaces = totalPlaces;
-            BookedPlaces = 0;
+            BookedPlaces = bookedPlaces;
         }
     }
 }

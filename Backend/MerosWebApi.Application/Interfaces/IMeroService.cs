@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MerosWebApi.Application.Common.DTOs.MeroService;
 using MerosWebApi.Core.Models.Mero;
+using MerosWebApi.Core.Repository;
 
 namespace MerosWebApi.Application.Interfaces
 {
@@ -14,7 +15,8 @@ namespace MerosWebApi.Application.Interfaces
 
         public Task<MeroResDto> CreateNewMeroAsync(string creatorId, MeroReqDto createResDto);
 
-        public Task UpdateMeroAsync(Mero mero);
+        public Task<MeroResDto> FullMeroUpdateAsync(string userId, string meroId, MeroReqDto updateMeroData);
 
+        public Task<QuerryStatus> DelereMeroByIdAsync(string userId, string meroId);
     }
 }
