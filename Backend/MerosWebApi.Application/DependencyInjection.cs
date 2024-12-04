@@ -178,8 +178,13 @@ namespace MerosWebApi.Application
                 {
                     options.InvalidModelStateResponseFactory = context =>
                     {
+                        var errors = context.ModelState
+                            .Where(e => e.Value.Errors.Count > 0)
+                            .SelectMany(e => e.Value.Errors.Select(x => new ValidationErrorResponse(e.Key, x.ErrorMessage)))
+                            .ToList();
+
                         return new BadRequestObjectResult(
-                            new MyResponseMessage{ Message = "One or more validation errors occurred." });
+                            new MyResponseMessage("One or more validation errors occurred.", errors));
                     };
                 })
                 .AddFluentValidation(config =>

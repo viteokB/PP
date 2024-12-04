@@ -55,7 +55,7 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage { Message = ex.Message });
+                return BadRequest(new MyResponseMessage(ex.Message));
             }
         }
 
@@ -79,11 +79,11 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (EntityNotFoundException ex)
             {
-                return NotFound(new MyResponseMessage { Message = ex.Message });
+                return NotFound(new MyResponseMessage(ex.Message));
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage { Message = ex.Message });
+                return BadRequest(new MyResponseMessage(ex.Message));
             }
         }
 
@@ -109,11 +109,11 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (EntityNotFoundException ex)
             {
-                return NotFound(new MyResponseMessage { Message = ex.Message });
+                return NotFound(new MyResponseMessage(ex.Message));
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage { Message = ex.Message });
+                return BadRequest(new MyResponseMessage(ex.Message));
             }
         }
 
@@ -139,11 +139,11 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (EmailNotSentException ex)
             {
-                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage(ex.Message));
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage { Message = ex.Message });
+                return BadRequest(new MyResponseMessage(ex.Message));
             }
         }
 
@@ -167,7 +167,7 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage { Message = ex.Message });
+                return BadRequest(new MyResponseMessage(ex.Message));
             }
         }
         /// <summary>
@@ -194,7 +194,7 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (ForbiddenException ex)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden, new MyResponseMessage { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.Forbidden, new MyResponseMessage(ex.Message));
             }
         }
 
@@ -221,15 +221,15 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (ForbiddenException ex)
             {
-                return StatusCode((int)HttpStatusCode.Forbidden, new MyResponseMessage { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.Forbidden, new MyResponseMessage(ex.Message));
             }
             catch (EmailNotSentException ex)
             {
-                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage(ex.Message));
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage { Message = ex.Message });
+                return BadRequest(new MyResponseMessage(ex.Message));
             }
         }
 
@@ -254,11 +254,11 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (EmailNotSentException ex)
             {
-                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage { Message = ex.Message });
+                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage(ex.Message));
             }
             catch (AppException ex)
             {
-                return BadRequest(new MyResponseMessage { Message = ex.Message });
+                return BadRequest(new MyResponseMessage(ex.Message));
             }
         }
 

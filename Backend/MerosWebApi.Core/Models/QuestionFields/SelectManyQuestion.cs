@@ -52,7 +52,7 @@ namespace MerosWebApi.Core.Models.Questions
             }
                 
 
-            return new List<string>() { answers[0] };
+            return answers.ToList();
         }
     }
 }

@@ -48,14 +48,14 @@ namespace MerosWebApi.Controllers.V1
 
                 return CreatedAtAction(nameof(GetMeroDetailsAsync), new {meroId = meroResDto.Id}, meroResDto);
             }
-            catch (MeroTimeException timeException)
-            {
-                return BadRequest(new MeroValidationErrorDto(timeException.TimePeriodsReqDto, timeException.Message));
-            }
-            catch (MeroFieldException fieldTypeException)
-            {
-                return BadRequest(new MeroValidationErrorDto(fieldTypeException.FieldReqDto, fieldTypeException.Message));
-            }
+            //catch (MeroTimeException timeException)
+            //{
+            //    return BadRequest(new MeroValidationErrorDto(timeException.TimePeriodsReqDto, timeException.Message));
+            //}
+            //catch (MeroFieldException fieldTypeException)
+            //{
+            //    return BadRequest(new MeroValidationErrorDto(fieldTypeException.FieldReqDto, fieldTypeException.Message));
+            //}
             catch (AppException ex)
             {
                 return StatusCode((int)HttpStatusCode.BadGateway, new MeroValidationErrorDto(null, ex.Message));
@@ -82,28 +82,28 @@ namespace MerosWebApi.Controllers.V1
 
                 return CreatedAtAction(nameof(GetMeroDetailsAsync), new { meroId = updateMero.Id }, updateMero);
             }
-            catch (MeroTimeException timeException)
-            {
-                return BadRequest(new MeroValidationErrorDto(timeException.TimePeriodsReqDto, timeException.Message));
-            }
-            catch (MeroFieldException fieldTypeException)
-            {
-                return BadRequest(
-                    new MeroValidationErrorDto(fieldTypeException.FieldReqDto, fieldTypeException.Message));
-            }
+            //catch (MeroTimeException timeException)
+            //{
+            //    return BadRequest(new MeroValidationErrorDto(timeException.TimePeriodsReqDto, timeException.Message));
+            //}
+            //catch (MeroFieldException fieldTypeException)
+            //{
+            //    return BadRequest(
+            //        new MeroValidationErrorDto(fieldTypeException.FieldReqDto, fieldTypeException.Message));
+            //}
             catch (ForbiddenException ex)
             {
                 return StatusCode((int)HttpStatusCode.Forbidden,
-                    new MyResponseMessage { Message = ex.Message });
+                    new MyResponseMessage(ex.Message) );
             }
             catch (MeroNotFoundException ex)
             {
-                return NotFound(new MyResponseMessage { Message = ex.Message });
+                return NotFound(new MyResponseMessage(ex.Message));
             }
-            catch (NotPossibleUpdateException ex)
-            {
-                return BadRequest(new MeroValidationErrorDto(null, ex.Message));
-            }
+            //catch (NotPossibleUpdateException ex)
+            //{
+            //    return BadRequest(new MeroValidationErrorDto(null, ex.Message));
+            //}
             catch (AppException ex)
             {
                 return StatusCode((int)HttpStatusCode.BadGateway, new MeroValidationErrorDto(null, ex.Message));
@@ -131,7 +131,7 @@ namespace MerosWebApi.Controllers.V1
             }
             catch (MeroNotFoundException ex)
             {
-                return NotFound(new MyResponseMessage{Message = ex.Message});
+                return NotFound(new MyResponseMessage(ex.Message));
             }
             catch (AppException ex)
             {
@@ -162,16 +162,16 @@ namespace MerosWebApi.Controllers.V1
                 if (querryResult.IsSuccess)
                     return NoContent();
 
-                return UnprocessableEntity(new MyResponseMessage { Message = querryResult.Message });
+                return UnprocessableEntity(new MyResponseMessage(querryResult.Message));
             }
             catch (MeroNotFoundException ex)
             {
-                return NotFound(new MyResponseMessage { Message = ex.Message });
+                return NotFound(new MyResponseMessage(ex.Message));
             }
             catch (ForbiddenException ex)
             {
                 return StatusCode((int)HttpStatusCode.Forbidden,
-                    new MyResponseMessage { Message = ex.Message });
+                    new MyResponseMessage(ex.Message));
             }
             catch (AppException ex)
             {

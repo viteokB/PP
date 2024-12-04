@@ -92,7 +92,7 @@ namespace MerosWebApi
                 });
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
