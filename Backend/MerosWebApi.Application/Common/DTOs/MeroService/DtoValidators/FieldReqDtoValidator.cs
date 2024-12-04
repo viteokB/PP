@@ -21,7 +21,7 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService.DtoValidators
         {
             Type fieldBaseType = typeof(Field);
 
-            var assemblyTypes = Assembly.GetExecutingAssembly().GetTypes();
+            var assemblyTypes = Assembly.GetAssembly(fieldBaseType).GetTypes();
 
             var fieldBaseSubclasses = assemblyTypes
                 .Where(t => t.IsSubclassOf(fieldBaseType));
@@ -69,7 +69,7 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService.DtoValidators
                 if (field.Answers.Any(a => string.IsNullOrWhiteSpace(a)))
                     return (false, $"Текст ответа на вопрос \"{field.Text}\" должен быть не пустой строкой");
             }
-            else if (field.Answers != null)
+            else if (field.Answers != null && fieldTypes.Contains(field.Type))
                 return (false, $"Вопрос '{field.Text}' должен иметь значение возможных ответов = null");
 
             return (true, $"Возможные ответы для типа '{field.Type}' - валидны");
