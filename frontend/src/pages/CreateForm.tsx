@@ -1,12 +1,32 @@
-import type { FC} from "react";
+import type { FC } from "react"
 import { useState } from "react"
 import Input from "../components/input/Input"
 import addField from "../assets/addField.svg"
 import dump from "../assets/dump.svg"
-import { Link, Navigate } from "react-router-dom"
+import { Link } from "react-router-dom"
+import type IInput from "../model/types"
+
+const mock: Array<IInput> = [
+  {
+    type: "text",
+    label: "Например, «Ваше ФИО»",
+  },
+  {
+    type: "text",
+    label: "Например, «Ваш возраст»",
+  },
+  {
+    type: "text",
+    label: "Например, «Ваш номер телефона»",
+  },
+]
 
 const CreateForm: FC = () => {
   const [isStepOne, setIsStepOne] = useState(true)
+  const [amock, setMock] = useState(mock)
+  const deleteInput = () => {
+   setMock(amock.slice(0,-1))
+  }
   return (
     isStepOne ?
       (
@@ -46,13 +66,26 @@ const CreateForm: FC = () => {
             </div>
             <div>
               <div className={"flex flex-col gap-4"}>
-                <Input type={"text"} label={"Например, «Ваше ФИО»"} />
-                <Input type={"text"} label={"Например, «Ваш возраст»"} />
-                <Input type={"text"} label={"Например, «Ваш номер телефона»"} />
+                {
+                  amock.map((inputObject) =>(
+                    <Input key={inputObject.label} type={inputObject.type} label={inputObject.label} />
+                  ))
+                }
               </div>
               <div className={"flex justify-between mt-3 text-[14px] leading-5"}>
-                <button><img src={addField} alt="" className={"inline mr-1.5 pb-0.5"} /> Добавить ещё поле</button>
-                <button className={"text-danger"}><img src={dump} alt="" className={"inline mr-1.5 pb-0.5"} /> Удалить
+                <button
+                  onClick={() =>{ setMock(
+                    amock.concat({
+                      type: "text",
+                      label: "йоу"
+                    })
+                  )
+                }}>
+                  <img src={addField} alt="" className={"inline mr-1.5 pb-0.5"} />
+                  Добавить ещё поле
+                </button>
+                <button className={"text-danger"} onClick={deleteInput}>
+                  <img src={dump} alt="" className={"inline mr-1.5 pb-0.5"}/> Удалить
                   поле
                 </button>
               </div>
