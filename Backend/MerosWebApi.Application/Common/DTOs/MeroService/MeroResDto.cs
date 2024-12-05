@@ -11,6 +11,9 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService
     public class MeroResDto
     {
         public string Id { get; set; }
+
+        public string UniqueInviteCode { get; set; }
+
         public string MeetName { get; set; }
 
         public string Description { get; set; }
@@ -26,6 +29,7 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService
             return new MeroResDto
             {
                 Id = mero.Id,
+                UniqueInviteCode = mero.UniqueInviteCode,
                 MeetName = mero.Name,
                 CreatorEmail = mero.CreatorEmail,
                 Description = mero.Description,

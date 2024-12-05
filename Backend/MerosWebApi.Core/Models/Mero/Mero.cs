@@ -10,6 +10,8 @@ namespace MerosWebApi.Core.Models.Mero
     {
         public string Id { get; }
 
+        public string UniqueInviteCode { get; }
+
         public string Name { get; }
 
         public string CreatorId { get; }
@@ -24,11 +26,12 @@ namespace MerosWebApi.Core.Models.Mero
 
         public List<MeroFile> Files { get; }
 
-        private Mero(string id, string name, string creatorId, string creatorEmail,
+        private Mero(string id, string uniqueInviteCode, string name, string creatorId, string creatorEmail,
             string description, List<TimePeriod> timePeriods, List<Field> fields,
             List<MeroFile> files)
         {
             Id = id;
+            UniqueInviteCode = uniqueInviteCode;
             Name = name;
             CreatorId = creatorId;
             CreatorEmail = creatorEmail;
@@ -38,11 +41,11 @@ namespace MerosWebApi.Core.Models.Mero
             Files = files;
         }
 
-        public static Mero CreateMero(string id, string name, string creatorId, string creatorEmail, 
+        public static Mero CreateMero(string id, string uniqueInviteCode, string name, string creatorId, string creatorEmail, 
             string description, List<TimePeriod> timePeriods, List<Field> fields,
             List<MeroFile> files)
         {
-            return new Mero(id, name, creatorId, creatorEmail, 
+            return new Mero(id, uniqueInviteCode, name, creatorId, creatorEmail, 
                 description, timePeriods, fields, files);
         }
 

@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using MerosWebApi.Core.Models;
 using MerosWebApi.Core.Models.Mero;
+using MerosWebApi.Core.Models.PhormAnswer;
 using MerosWebApi.Core.Repository;
 using MerosWebApi.Persistence.Entites;
 using MerosWebApi.Persistence.Helpers;
@@ -41,7 +42,27 @@ namespace MerosWebApi.Persistence.Repositories
                 .Select(f => FieldPropertyAssigner.MapFrom(f))
                 .ToList();
 
-            return Mero.CreateMero(mero.Id, mero.Name, mero.CreatorId, mero.CreatorEmail,
+            return Mero.CreateMero(mero.Id, mero.UniqueInviteCode, mero.Name, mero.CreatorId, mero.CreatorEmail,
+                mero.Description, await timePeriods, fields, mero.Files);
+        }
+
+        public async Task<Mero> GetMeroByInviteCodeAsync(string uniqueInviteCode)
+        {
+            var fitler = Builders<DatabaseMero>.Filter
+                .Eq("uniq_inv_code", uniqueInviteCode);
+            var meros = await _dbService.Meros.FindAsync(fitler);
+            var mero = meros.FirstOrDefault();
+
+            if (mero == null)
+                return null;
+
+            var timePeriods = GetTimePeriodsAsync(mero.TimePeriods);
+
+            var fields = mero.Fields
+                .Select(f => FieldPropertyAssigner.MapFrom(f))
+                .ToList();
+
+            return Mero.CreateMero(mero.Id, mero.UniqueInviteCode, mero.Name, mero.CreatorId, mero.CreatorEmail,
                 mero.Description, await timePeriods, fields, mero.Files);
         }
 

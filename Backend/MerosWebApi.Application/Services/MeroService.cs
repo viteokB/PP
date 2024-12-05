@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MerosWebApi.Application.Common;
 using MerosWebApi.Application.Common.DTOs.MeroService;
 using MerosWebApi.Application.Common.Exceptions;
 using MerosWebApi.Application.Interfaces;
@@ -18,6 +19,8 @@ namespace MerosWebApi.Application.Services
 {
     public class MeroService : IMeroService
     {
+        const int INVITE_CODE_LENGTH = 8;
+
         private readonly IMeroRepository _repository;
         public MeroService(IMeroRepository repository)
         {
@@ -34,6 +37,16 @@ namespace MerosWebApi.Application.Services
             return MeroResDto.Map(mero);
         }
 
+        public async Task<MeroResDto> GetMeroByInviteCodeAsync(string inviteCode)
+        {
+            var mero = await _repository.GetMeroByInviteCodeAsync(inviteCode);
+
+            if (mero == null)
+                throw new MeroNotFoundException("Мероприятие не было найдено");
+
+            return MeroResDto.Map(mero);
+        }
+
         public async Task<MeroResDto> CreateNewMeroAsync(string creatorId, MeroReqDto createReqDto)
         {
             var meroId = ObjectId.GenerateNewId().ToString();
@@ -42,7 +55,9 @@ namespace MerosWebApi.Application.Services
 
             var fields = CreateMeroFields(createReqDto);
 
-            var mero = Mero.CreateMero(meroId, createReqDto.MeetName, creatorId, createReqDto.CreatorEmail,
+            var uniqInviteCode = await CreateUniqueInviteCode();
+
+            var mero = Mero.CreateMero(meroId, uniqInviteCode, createReqDto.MeetName, creatorId, createReqDto.CreatorEmail,
                 createReqDto.Description, timePeriods, fields, null);
 
             await _repository.AddMeroAsync(mero);
@@ -78,8 +93,8 @@ namespace MerosWebApi.Application.Services
 
             var fields = CreateMeroFields(updateMeroData);
 
-            var mero = Mero.CreateMero(meroId, updateMeroData.MeetName, userId, updateMeroData.CreatorEmail,
-                updateMeroData.Description, timePeriods, fields, null);
+            var mero = Mero.CreateMero(meroId, meroInDb.UniqueInviteCode, updateMeroData.MeetName, userId,
+                updateMeroData.CreatorEmail, updateMeroData.Description, timePeriods, fields, null);
 
             var querryStatus = await _repository.DeleteMeroByIdAsync(meroId);
             if (!querryStatus.IsSuccess)
@@ -142,6 +157,18 @@ namespace MerosWebApi.Application.Services
             }
 
             return fields;
+        }
+
+        private async Task<string> CreateUniqueInviteCode()
+        {
+            var inviteCode = RandomStringGenerator.GenerateRandomString(INVITE_CODE_LENGTH);
+
+            while (await _repository.GetMeroByInviteCodeAsync(inviteCode) != null)
+            {
+                inviteCode = RandomStringGenerator.GenerateRandomString(INVITE_CODE_LENGTH);
+            }
+
+            return inviteCode;
         }
 
         #endregion

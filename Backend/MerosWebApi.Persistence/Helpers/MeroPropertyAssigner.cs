@@ -18,6 +18,7 @@ namespace MerosWebApi.Persistence.Helpers
             return new DatabaseMero
             {
                 Id = from.Id,
+                UniqueInviteCode = from.UniqueInviteCode,
                 CreatorEmail = from.CreatorEmail,
                 CreatorId = from.CreatorId,
                 Description = from.Description,
@@ -34,6 +35,7 @@ namespace MerosWebApi.Persistence.Helpers
         public static void AssignPropertyValues(DatabaseMero to, Mero from)
         {
             to.Id = from.Id;
+            to.UniqueInviteCode = from.UniqueInviteCode;
             to.CreatorEmail = from.CreatorEmail;
             to.CreatorId = from.CreatorId;
             to.Description = from.Description;

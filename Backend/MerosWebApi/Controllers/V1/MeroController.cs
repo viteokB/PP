@@ -82,15 +82,6 @@ namespace MerosWebApi.Controllers.V1
 
                 return CreatedAtAction(nameof(GetMeroDetailsAsync), new { meroId = updateMero.Id }, updateMero);
             }
-            //catch (MeroTimeException timeException)
-            //{
-            //    return BadRequest(new MeroValidationErrorDto(timeException.TimePeriodsReqDto, timeException.Message));
-            //}
-            //catch (MeroFieldException fieldTypeException)
-            //{
-            //    return BadRequest(
-            //        new MeroValidationErrorDto(fieldTypeException.FieldReqDto, fieldTypeException.Message));
-            //}
             catch (ForbiddenException ex)
             {
                 return StatusCode((int)HttpStatusCode.Forbidden,
@@ -100,10 +91,10 @@ namespace MerosWebApi.Controllers.V1
             {
                 return NotFound(new MyResponseMessage(ex.Message));
             }
-            //catch (NotPossibleUpdateException ex)
-            //{
-            //    return BadRequest(new MeroValidationErrorDto(null, ex.Message));
-            //}
+            catch (NotPossibleUpdateException ex)
+            {
+                return BadRequest(new MeroValidationErrorDto(null, ex.Message));
+            }
             catch (AppException ex)
             {
                 return StatusCode((int)HttpStatusCode.BadGateway, new MeroValidationErrorDto(null, ex.Message));
@@ -115,7 +106,7 @@ namespace MerosWebApi.Controllers.V1
         /// </summary>
         /// <param name="meroId">Event id</param>
         /// <returns></returns>
-        [HttpGet("{meroId}")]
+        [HttpGet("by-id/{meroId}")]
         [ActionName(nameof(GetMeroDetailsAsync))]
         [Produces("application/json")]
         [ProducesResponseType(typeof(MeroResDto), (int)HttpStatusCode.OK)]
@@ -126,7 +117,35 @@ namespace MerosWebApi.Controllers.V1
             try
             {
                 var meroDto = await _meroService.GetMeroByIdAsync(meroId);
+                return Ok(meroDto);
+            }
+            catch (MeroNotFoundException ex)
+            {
+                return NotFound(new MyResponseMessage(ex.Message));
+            }
+            catch (AppException ex)
+            {
+                return StatusCode((int)HttpStatusCode.BadGateway,
+                    new MeroValidationErrorDto(null, ex.Message));
+            }
+        }
 
+        /// <summary>
+        /// Receives the event questionnaire by the specified unique invite code
+        /// </summary>
+        /// <param name="inviteCode">Unique invite code</param>
+        /// <returns></returns>
+        [HttpGet("by-invite-code/{inviteCode}")]
+        [ActionName(nameof(GetMeroDetailsByInviteCodeAsync))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(MeroResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadGateway)]
+        public async Task<ActionResult<MeroResDto>> GetMeroDetailsByInviteCodeAsync(string inviteCode)
+        {
+            try
+            {
+                var meroDto = await _meroService.GetMeroByInviteCodeAsync(inviteCode);
                 return Ok(meroDto);
             }
             catch (MeroNotFoundException ex)

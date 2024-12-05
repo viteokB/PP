@@ -17,6 +17,10 @@ namespace MerosWebApi.Persistence.Entites
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
+        [BsonElement("uniq_inv_code")]
+        [BsonRequired]
+        public string? UniqueInviteCode { get; set; }
+
         [BsonElement("name")]
         [BsonRequired]
         public string Name { get; set; }
