@@ -26,10 +26,8 @@ namespace MerosWebApi.Application.Common.DTOs.MeroService.DtoValidators
             var fieldBaseSubclasses = assemblyTypes
                 .Where(t => t.IsSubclassOf(fieldBaseType));
 
-            var havePossibleAnswers = typeof(IHavePossibleAnswers);
-
             var possAnswerSubclasses = assemblyTypes
-                .Where(t => t.IsAssignableFrom(havePossibleAnswers));
+                .Where(t => t.IsClass && !t.IsAbstract && typeof(IHavePossibleAnswers).IsAssignableFrom(t));
 
             fieldTypes = fieldBaseSubclasses
                 .Select(t => t.Name)

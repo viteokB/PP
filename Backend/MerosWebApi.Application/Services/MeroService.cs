@@ -155,6 +155,25 @@ namespace MerosWebApi.Application.Services
             return PhormAnswerResDto.Map(phormAnswer);
         }
 
+        public async Task<PhormAnswerResDto> GetMeroPhormAnswerByIdAsync(string phormId)
+        {
+            var phormAnswer = await _repository.GetMeroPhormAnswerByIdAsync(phormId);
+
+            if (phormAnswer == null)
+                throw new PhormAnswerNotFoundException("Форма ответа не найдена");
+
+            return PhormAnswerResDto.Map(phormAnswer);
+        }
+
+        public async Task<List<ShowWriitenPhromResDto>> GetMeroPhormsListByMeroAsync(int startIndex, int count, string meroId)
+        {
+            var phormAnswers = await _repository.GetListMeroPhormAnswersByMeroAsync(startIndex, count, meroId);
+
+            return phormAnswers
+                .Select(p => ShowWriitenPhromResDto.Map(p))
+                .ToList(); ;
+        }
+
         #region Helpers
 
         private List<TimePeriod> CreateMeroTimePeriods(MeroReqDto createReqDto)

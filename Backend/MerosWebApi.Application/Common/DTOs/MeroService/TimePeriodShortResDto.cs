@@ -7,19 +7,16 @@ using System.Threading.Tasks;
 
 namespace MerosWebApi.Application.Common.DTOs.MeroService
 {
-    public class TimePeriodsResDto
+    public class TimePeriodShortResDto
     {
-        public string Id { get; set; }
-
         public DateTime StartTime { get; set; }
 
         public DateTime EndTime { get; set; }
 
-        public static TimePeriodsResDto Map(TimePeriod timePeriod)
+        public static TimePeriodShortResDto Map(TimePeriod timePeriod)
         {
-            return new TimePeriodsResDto
+            return new TimePeriodShortResDto
             {
-                Id = timePeriod.Id,
                 StartTime = timePeriod.StartTime,
                 EndTime = timePeriod.EndTime,
             };

@@ -30,7 +30,7 @@ namespace MerosWebApi.Persistence.Entites
 
         [BsonElement("period_id")]
         [BsonRequired]
-        public string TimePeriod { get; set; }
+        public string TimePeriodId { get; set; }
 
         [BsonElement("created_at")]
         public DateTime CreatedTime { get; set; }

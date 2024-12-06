@@ -23,5 +23,9 @@ namespace MerosWebApi.Core.Repository
         public Task<QuerryStatus> DeleteMeroByIdAsync(string meroId);
 
         public Task<bool> AddMeroPhormAnswerAsync(PhormAnswer phormAnswer);
+
+        public Task<PhormAnswer> GetMeroPhormAnswerByIdAsync(string phormId);
+
+        public Task<List<PhormAnswer>> GetListMeroPhormAnswersByMeroAsync(int startIndex, int count, string meroId);
     }
 }

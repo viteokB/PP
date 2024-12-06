@@ -209,8 +209,8 @@ namespace MerosWebApi.Controllers.V1
                 var creatorId = _authHelper.GetUserId(this);
                 var phormAnswerResDto = await _meroService.CreateNewPhormAnswerAsync(creatorId, phormAnswerReqDto);
 
-                return Ok( /*nameof(GetMeroDetailsAsync),
-                    new { meroId = phormAnswerResDto.Id }, phormAnswerResDto*/);
+                return CreatedAtAction(nameof(GetPhormAnswerDetails),
+                    new { phormId = phormAnswerResDto.Id }, phormAnswerResDto);
             }
             catch (AppException ex)
             {
@@ -226,28 +226,51 @@ namespace MerosWebApi.Controllers.V1
             }
         }
 
-        //[HttpGet("by-id/{meroId}")]
-        //[ActionName(nameof(GetMeroDetailsAsync))]
-        //[Produces("application/json")]
-        //[ProducesResponseType(typeof(MeroResDto), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.NotFound)]
-        //[ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadGateway)]
-        //public async Task<ActionResult<MeroResDto>> GetMeroDetailsAsync(string meroId)
-        //{
-        //    try
-        //    {
-        //        var meroDto = await _meroService.GetMeroByIdAsync(meroId);
-        //        return Ok(meroDto);
-        //    }
-        //    catch (MeroNotFoundException ex)
-        //    {
-        //        return NotFound(new MyResponseMessage(ex.Message));
-        //    }
-        //    catch (AppException ex)
-        //    {
-        //        return StatusCode((int)HttpStatusCode.BadGateway,
-        //            new MeroValidationErrorDto(null, ex.Message));
-        //    }
-        //}
+        [HttpGet("phorm-answer/get-one/{phormId}")]
+        [ActionName(nameof(GetPhormAnswerDetails))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(MeroResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadGateway)]
+        public async Task<ActionResult<PhormAnswerResDto>> GetPhormAnswerDetails(string phormId)
+        {
+            try
+            {
+                var phormAnswerResDto = await _meroService.GetMeroPhormAnswerByIdAsync(phormId);
+                return Ok(phormAnswerResDto);
+            }
+            catch (MeroNotFoundException ex)
+            {
+                return NotFound(new MyResponseMessage(ex.Message));
+            }
+            catch (AppException ex)
+            {
+                return StatusCode((int)HttpStatusCode.BadGateway,
+                    new MeroValidationErrorDto(null, ex.Message));
+            }
+        }
+
+        [HttpGet("phorm-answer/get-list-by-mero")]
+        [ActionName(nameof(GetListMeroPhormsAnswers))]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(MeroResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(MyResponseMessage), (int)HttpStatusCode.BadGateway)]
+        public async Task<ActionResult<List<ShowWriitenPhromResDto>>> 
+            GetListMeroPhormsAnswers(int startIndex, int count, string meroId)
+        {
+            try
+            {
+                var phormAnswerResDtos = await _meroService
+                    .GetMeroPhormsListByMeroAsync(startIndex, count, meroId);
+
+                return Ok(phormAnswerResDtos);
+            }
+            catch (AppException ex)
+            {
+                return StatusCode((int)HttpStatusCode.BadGateway,
+                    new MeroValidationErrorDto(null, ex.Message));
+            }
+        }
     }
 }

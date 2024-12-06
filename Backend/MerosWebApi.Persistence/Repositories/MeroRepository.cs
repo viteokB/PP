@@ -116,7 +116,7 @@ namespace MerosWebApi.Persistence.Repositories
                             QuestionText = a.QuestionText
                         })
                         .ToList(),
-                        TimePeriod = phormAnswer.TimePeriod.Id,
+                        TimePeriodId = phormAnswer.TimePeriod.Id,
                         CreatedTime = DateTime.UtcNow
                     };
 
@@ -143,6 +143,52 @@ namespace MerosWebApi.Persistence.Repositories
             }
 
             return true;
+        }
+
+        public async Task<PhormAnswer> GetMeroPhormAnswerByIdAsync(string phormId)
+        {
+            var findQuerry = await _dbService.PhormAnswers
+                .FindAsync(p => p.Id == phormId);
+
+            var phormAnswer = findQuerry.FirstOrDefault();
+
+            if(phormAnswer == null)
+                return null;
+
+            var answers = phormAnswer.Answers
+                .Select(a => new Answer(a.QuestionText, a.QuestionAnswers))
+                .ToList();
+
+            var timePeriods = await GetTimePeriodsAsync(new []{ phormAnswer.TimePeriodId });
+            var period = timePeriods.FirstOrDefault();
+
+            return PhormAnswer.Create(phormAnswer.Id, phormAnswer.MeroId, phormAnswer.UserId,
+                answers, period, phormAnswer.CreatedTime);
+        }
+
+        public async Task<List<PhormAnswer>> GetListMeroPhormAnswersByMeroAsync(int startIndex, int count, string meroId)
+        {
+            var phormAnswers = await _dbService.PhormAnswers
+                .Find(p => p.MeroId == meroId)
+                .Skip(startIndex)
+                .Limit(count)
+                .ToListAsync();
+
+            var result = new List<PhormAnswer>();
+            foreach (var phormAnswer in phormAnswers)
+            {
+                var answers = phormAnswer.Answers
+                    .Select(a => new Answer(a.QuestionText, a.QuestionAnswers))
+                    .ToList();
+
+                var timePeriods = await GetTimePeriodsAsync(new[] { phormAnswer.TimePeriodId });
+                var period = timePeriods.FirstOrDefault();
+
+                result.Add(PhormAnswer.Create(phormAnswer.Id, phormAnswer.MeroId, phormAnswer.UserId,
+                    answers, period, phormAnswer.CreatedTime));
+            }
+
+            return result;
         }
 
         public async Task<List<TimePeriod>> GetTimePeriodsAsync(IEnumerable<string> ids)
