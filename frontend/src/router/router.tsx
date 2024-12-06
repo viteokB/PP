@@ -5,6 +5,7 @@ import Home from "../pages/Home"
 import CreateForm from "../pages/CreateForm"
 import SuccessForm from "../pages/SuccessForm"
 import Profile from "../pages/Profile"
+import DetailedMero from "../pages/DetailedMero"
 
 export const router= createBrowserRouter([
   {
@@ -26,6 +27,10 @@ export const router= createBrowserRouter([
       {
         path: "/profile",
         element: <Profile/>
+      },
+      {
+        path: "/detailedmero",
+        element: <DetailedMero/>
       },
     ]
   },
