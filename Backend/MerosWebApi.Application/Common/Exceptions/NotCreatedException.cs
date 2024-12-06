@@ -5,19 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MerosWebApi.Core.Models.Exceptions
+namespace MerosWebApi.Application.Common.Exceptions
 {
-    public class FieldTypeException : CoreException
+    public class NotCreatedException : AppException
     {
-        public FieldTypeException()
+        public NotCreatedException()
         {
         }
 
-        public FieldTypeException(string message) : base(message)
+        public NotCreatedException(string message) : base(message)
         {
         }
 
-        public FieldTypeException(string message, params object[] args)
+        public NotCreatedException(string message, params object[] args)
             : base(string.Format(CultureInfo.CurrentCulture, message, args))
         {
         }

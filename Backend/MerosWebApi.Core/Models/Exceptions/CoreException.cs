@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace MerosWebApi.Core.Models.Exceptions
 {
-    public class FieldTypeException : CoreException
+    public class CoreException : Exception
     {
-        public FieldTypeException()
+        public CoreException()
         {
         }
 
-        public FieldTypeException(string message) : base(message)
+        public CoreException(string message) : base(message)
         {
         }
 
-        public FieldTypeException(string message, params object[] args)
+        public CoreException(string message, params object[] args)
             : base(string.Format(CultureInfo.CurrentCulture, message, args))
         {
         }

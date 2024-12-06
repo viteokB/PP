@@ -20,5 +20,7 @@ namespace MerosWebApi.Application.Interfaces
         public Task<MeroResDto> FullMeroUpdateAsync(string userId, string meroId, MeroReqDto updateMeroData);
 
         public Task<QuerryStatus> DelereMeroByIdAsync(string userId, string meroId);
+
+        public Task<PhormAnswerResDto> CreateNewPhormAnswerAsync(string userId, PhormAnswerReqDto phormAnswerReqDto);
     }
 }

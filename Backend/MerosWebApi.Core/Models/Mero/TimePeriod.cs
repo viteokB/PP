@@ -29,7 +29,7 @@ namespace MerosWebApi.Core.Models.Mero
         private TimePeriod(string id, DateTime startTime, DateTime endTime,
             int totalPlaces, int bookedPlaces = 0)
         {
-            if (startTime < DateTime.Now || endTime <= startTime)
+            if (endTime <= startTime)
                 throw new NotValidTimePeriodException("Не правильный формат периода мероприятия");
 
             if (totalPlaces <= 0)

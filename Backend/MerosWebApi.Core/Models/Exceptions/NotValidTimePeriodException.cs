@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MerosWebApi.Core.Models.Exceptions
 {
-    public class NotValidTimePeriodException : Exception
+    public class NotValidTimePeriodException : CoreException
     {
         public NotValidTimePeriodException()
         {

@@ -10,6 +10,7 @@ using MerosWebApi.Application.Interfaces;
 using MerosWebApi.Core.Models;
 using MerosWebApi.Core.Models.Exceptions;
 using MerosWebApi.Core.Models.Mero;
+using MerosWebApi.Core.Models.PhormAnswer;
 using MerosWebApi.Core.Models.QuestionFields;
 using MerosWebApi.Core.Repository;
 using MongoDB.Bson;
@@ -104,6 +105,54 @@ namespace MerosWebApi.Application.Services
             await _repository.AddMeroAsync(mero);
 
             return MeroResDto.Map(mero);
+        }
+
+        public async Task<PhormAnswerResDto> CreateNewPhormAnswerAsync(string userId, PhormAnswerReqDto phormAnswerReqDto)
+        {
+            var phormMero = await _repository.GetMeroByIdAsync(phormAnswerReqDto.MeroId);
+
+            if (phormMero == null)
+                throw new MeroNotFoundException("Соответсвующее мероприятие не было найдено");
+            if (phormMero.Fields.Count != phormAnswerReqDto.Answers.Count)
+                throw new PhormAnswerFieldException(
+                    "Число полей в форме ответа должно быть равно числу полей в анкете мероприятия");
+
+            var phormMeroAnswers = new List<Answer>();
+
+            for (int i = 0; i < phormMero.Fields.Count; i++)
+            {
+                var field = phormMero.Fields[i];
+                var phormMeroFieldText = field.Text;
+                var phormAnswerFieldText = phormAnswerReqDto.Answers[i].QuestionText;
+
+                if (phormMeroFieldText != phormAnswerFieldText)
+                    throw new PhormAnswerFieldException(
+                        "Строка вопроса в анкете мероприя должна быть равна строке в форме ответа");
+
+                var fieldAnswers = phormAnswerReqDto.Answers[i].QuestionAnswers.ToArray();
+                
+                var validateAnswers = field.SelectAnswer(fieldAnswers);
+
+                phormMeroAnswers.Add(new Answer(phormMeroFieldText, validateAnswers));
+            }
+
+            var timePeriod = await _repository.GetTimePeriodsAsync(
+                new List<string>() { phormAnswerReqDto.TimePeriodId });
+
+            if (timePeriod == null || timePeriod.Count != 1)
+                throw new TimePeriodNotFoundException($"Соответсвующее время записи {phormAnswerReqDto.TimePeriodId} не найдено");
+            if (timePeriod[0].BookedPlaces >= timePeriod[0].TotalPlaces)
+                throw new TimePeriodBusyException("Все места на данное время заняты");
+
+            var phormAnswer = PhormAnswer.Create(ObjectId.GenerateNewId().ToString(), phormMero.Id, userId, phormMeroAnswers,
+                timePeriod[0], DateTime.Now);
+
+            var createIsCorrect = await _repository.AddMeroPhormAnswerAsync(phormAnswer);
+
+            if (!createIsCorrect)
+                throw new NotCreatedException("Анкета не была создана, повторите немного позже");
+
+            return PhormAnswerResDto.Map(phormAnswer);
         }
 
         #region Helpers

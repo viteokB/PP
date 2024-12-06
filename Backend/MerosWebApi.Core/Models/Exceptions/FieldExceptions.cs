@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MerosWebApi.Core.Models.Exceptions
 {
-    public class FieldException : Exception
+    public class FieldException : CoreException
     {
         public FieldException()
         {

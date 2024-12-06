@@ -11,6 +11,7 @@ using MerosWebApi.Core.Models.PhormAnswer;
 using MerosWebApi.Core.Repository;
 using MerosWebApi.Persistence.Entites;
 using MerosWebApi.Persistence.Helpers;
+using MerosWebApi.Persistence.Repositories.MyDbExceptions;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Driver;
@@ -77,7 +78,71 @@ namespace MerosWebApi.Persistence.Repositories
         {
             var dbTimePeriod = TimePeriodPropertyAssigner.MapFrom(period);
 
-            _dbService.TimePeriods.InsertOneAsync(dbTimePeriod);
+            await _dbService.TimePeriods.InsertOneAsync(dbTimePeriod);
+        }
+
+        public async Task<bool> AddMeroPhormAnswerAsync(PhormAnswer phormAnswer)
+        {
+            using (var session = await _dbService.PhormAnswers.Database.Client.StartSessionAsync())
+            {
+                //session.StartTransaction();
+
+                try
+                {
+                    // Получаем информацию о периоде времени
+                    var timePeriod = await _dbService.TimePeriods
+                        .Find(session, tp => tp.Id == phormAnswer.TimePeriod.Id)
+                        .FirstOrDefaultAsync();
+
+                    if (timePeriod == null)
+                    {
+                        throw new TransactionLogicException("Time period not found.");
+                    }
+
+                    // Проверяем доступные места
+                    if (timePeriod.BookedPlaces >= timePeriod.TotalPlaces)
+                    {
+                        throw new TransactionLogicException("No available places.");
+                    }
+
+                    // Создаем новый ответ
+                    var newAnswer = new DatabasePhormAnswer
+                    {
+                        MeroId = phormAnswer.MeroId,
+                        UserId = phormAnswer.UserId,
+                        Answers = phormAnswer.Answers.Select(a => new DatabaseAnswer
+                        {
+                            QuestionAnswers = a.QuestionAnswers,
+                            QuestionText = a.QuestionText
+                        })
+                        .ToList(),
+                        TimePeriod = phormAnswer.TimePeriod.Id,
+                        CreatedTime = DateTime.UtcNow
+                    };
+
+                    // Добавляем новый ответ в коллекцию
+                    await _dbService.PhormAnswers.InsertOneAsync(session, newAnswer);
+
+                    // Увеличиваем количество забронированных мест
+                    var updateDefinition = Builders<DatabaseTimePeriod>
+                        .Update.Inc(tp => tp.BookedPlaces, 1);
+
+                    await _dbService.TimePeriods
+                        .UpdateOneAsync(session, tp => tp.Id == phormAnswer.TimePeriod.Id, updateDefinition);
+
+                    // Завершаем транзакцию
+                    //await session.CommitTransactionAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Откатываем транзакцию в случае ошибки
+                    //await session.AbortTransactionAsync();
+                    Console.WriteLine($"Transaction aborted: {ex.Message}");
+                    return false; // Неудача
+                }
+            }
+
+            return true;
         }
 
         public async Task<List<TimePeriod>> GetTimePeriodsAsync(IEnumerable<string> ids)

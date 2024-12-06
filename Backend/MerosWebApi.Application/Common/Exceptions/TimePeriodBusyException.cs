@@ -5,19 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MerosWebApi.Core.Models.Exceptions
+namespace MerosWebApi.Application.Common.Exceptions
 {
-    public class FieldTypeException : CoreException
+    public class TimePeriodBusyException : AppException
     {
-        public FieldTypeException()
+        public TimePeriodBusyException()
         {
         }
 
-        public FieldTypeException(string message) : base(message)
+        public TimePeriodBusyException(string message) : base(message)
         {
         }
 
-        public FieldTypeException(string message, params object[] args)
+        public TimePeriodBusyException(string message, params object[] args)
             : base(string.Format(CultureInfo.CurrentCulture, message, args))
         {
         }

@@ -21,5 +21,7 @@ namespace MerosWebApi.Core.Repository
         public Task<List<TimePeriod>> GetTimePeriodsAsync(IEnumerable<string> ids);
 
         public Task<QuerryStatus> DeleteMeroByIdAsync(string meroId);
+
+        public Task<bool> AddMeroPhormAnswerAsync(PhormAnswer phormAnswer);
     }
 }
