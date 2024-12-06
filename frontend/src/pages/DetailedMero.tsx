@@ -1,11 +1,12 @@
-import type { FC } from "react"
-import imgMembers from "../assets/members.svg"
+import { FC, useState } from "react"
+import QrModal from "../components/QrModal"
 
 
 const DetailedMero: FC = () => {
-
+  const [isOpen, setIsOpen] = useState(false)
   return (
     <>
+      <QrModal isOpen={isOpen} isClose={()=>setIsOpen(false)} />
       <div className={"main-container flex flex-col gap-8"}>
         <div className={"flex justify-between"}>
           <h1 className={"font-semibold text-[32px]"}>Enterprise Agile Russia</h1>
@@ -39,7 +40,7 @@ const DetailedMero: FC = () => {
           управляет портфелями, программами и проектами со стороны бизнеса или ИТ.
         </p>
         <div className={"flex flex-col gap-[22px]"}>
-          <button className={"base-btn"} >Поделиться мероприятием</button>
+          <button className={"base-btn"} onClick={()=> setIsOpen(true)} >Поделиться мероприятием</button>
           <div className={"flex gap-4"}>
             <button className={"border border-primary-text base-btn text-black bg-background max-w-[424px]"}>
               Редактировать форму
